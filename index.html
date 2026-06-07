@@ -488,48 +488,41 @@ function fetchBooks() {
 function loadCover(book, imgEl) {
   if (!imgEl || !imgEl.isConnected) return;
   var key = book.id;
-  // Use saved cover_url if available
   if (book.cover_url) { applyCover(imgEl, book.cover_url); return; }
   if (imgCache[key]) { applyCover(imgEl, imgCache[key]); return; }
   if (imgCache[key] === null) return;
+  // Try Google Books (title + author for better match)
   var cleanTitle = book.name.split(':')[0].trim().replace(/['"!]/g,'').substring(0,50);
-  var q = encodeURIComponent('"' + cleanTitle + '"');
-  // Try Google Books first
-  fetch('https://www.googleapis.com/books/v1/volumes?q=intitle:' + q + '&maxResults=1&fields=items(volumeInfo(imageLinks,listPrice),saleInfo(listPrice))', {signal: AbortSignal.timeout(6000)})
+  var authorLast = (book.author||'').split(',')[0].trim().split(' ').pop();
+  var q = encodeURIComponent('intitle:"' + cleanTitle + '" inauthor:' + authorLast);
+  fetch('https://www.googleapis.com/books/v1/volumes?q=' + q + '&maxResults=1&fields=items(volumeInfo(imageLinks,industryIdentifiers,listPrice),saleInfo(listPrice))', {signal: AbortSignal.timeout(6000)})
     .then(function(r) { return r.json(); })
     .then(function(d) {
       var vi = d.items && d.items[0] && d.items[0].volumeInfo;
       var si = d.items && d.items[0] && d.items[0].saleInfo;
-      var links = vi && vi.imageLinks;
-      var src = links && (links.thumbnail || links.smallThumbnail);
       // Cache RRP if found
       var lp = (si && si.listPrice) || (vi && vi.listPrice);
-      if (lp && lp.amount) {
-        var sgd = lp.currencyCode === 'SGD' ? lp.amount : Math.round(lp.amount * 1.35);
-        if (sgd > 0 && book.rrp_source !== 'manual') {
-          book.rrp = Math.round(sgd);
-          book.price = Math.round(sgd * 0.30);
-          book.rrp_source = 'google_books';
-        }
+      if (lp && lp.amount && book.rrp_source !== 'manual') {
+        var sgd = lp.currencyCode === 'SGD' ? Math.round(lp.amount) : Math.round(lp.amount * 1.35);
+        if (sgd > 4) { book.rrp = sgd; book.price = Math.round(sgd * 0.30); book.rrp_source = 'google_books'; }
       }
+      // Extract ISBN for OL fallback
+      var isbns = (vi && vi.industryIdentifiers) || [];
+      var isbn = '';
+      isbns.forEach(function(id) { if (id.type === 'ISBN_13' || id.type === 'ISBN_10') isbn = id.identifier; });
+      var links = vi && vi.imageLinks;
+      var src = links && (links.thumbnail || links.smallThumbnail);
       if (src) {
         src = src.replace('http://','https://').replace('zoom=1','zoom=3').replace('&edge=curl','');
-        imgCache[key] = src;
-        book.cover_source = 'google_books';
-        applyCover(imgEl, src);
+        imgCache[key] = src; applyCover(imgEl, src);
       } else {
-        // Fallback: Open Library
-        var olUrl = 'https://covers.openlibrary.org/b/title/' + encodeURIComponent(cleanTitle) + '-L.jpg';
-        imgCache[key] = olUrl;
-        book.cover_source = 'open_library';
-        applyCover(imgEl, olUrl);
+        // Fallback to Open Library (try ISBN first, then title search for cover ID)
+        tryOpenLibraryCover(book, imgEl, isbn, cleanTitle, key, false);
       }
     })
     .catch(function() {
-      var olUrl = 'https://covers.openlibrary.org/b/title/' + encodeURIComponent(cleanTitle) + '-L.jpg';
-      imgCache[key] = olUrl;
-      book.cover_source = 'open_library';
-      applyCover(imgEl, olUrl);
+      var cleanTitle2 = book.name.split(':')[0].trim().replace(/['"!]/g,'').substring(0,50);
+      tryOpenLibraryCover(book, imgEl, '', cleanTitle2, key, false);
     });
 }
 
@@ -566,19 +559,22 @@ function fetchRRPsBackground() {
 
 // Fetch Google Books data for one book; persist=true saves cover_url/rrp to book object
 function fetchBookData(book, persist) {
-  var q = encodeURIComponent('"' + book.name.split(':')[0].trim().replace(/['"!]/g,'').substring(0,45) + '"');
-  return fetch('https://www.googleapis.com/books/v1/volumes?q=intitle:' + q + '&maxResults=1&fields=items(volumeInfo(imageLinks,listPrice),saleInfo(listPrice))', {signal:AbortSignal.timeout(7000)})
+  var cleanTitle = book.name.split(':')[0].trim().replace(/['"!]/g,'').substring(0,50);
+  var authorLast = (book.author||'').split(',')[0].trim().split(' ').pop();
+  var q = encodeURIComponent('intitle:"' + cleanTitle + '" inauthor:' + authorLast);
+  return fetch('https://www.googleapis.com/books/v1/volumes?q=' + q + '&maxResults=1&fields=items(volumeInfo(imageLinks,industryIdentifiers,listPrice),saleInfo(listPrice))', {signal:AbortSignal.timeout(7000)})
     .then(function(r) { return r.json(); })
     .then(function(d) {
       var vi = d.items && d.items[0] && d.items[0].volumeInfo;
       var si = d.items && d.items[0] && d.items[0].saleInfo;
-      // RRP
       var lp = (si && si.listPrice) || (vi && vi.listPrice);
       if (lp && lp.amount && book.rrp_source !== 'manual') {
         var sgd = lp.currencyCode === 'SGD' ? Math.round(lp.amount) : Math.round(lp.amount * 1.35);
         if (sgd > 4) { book.rrp = sgd; book.price = Math.round(sgd * 0.30); book.rrp_source = 'google_books'; }
       }
-      // Cover
+      var isbns = (vi && vi.industryIdentifiers) || [];
+      var isbn = '';
+      isbns.forEach(function(id) { if (id.type === 'ISBN_13' || id.type === 'ISBN_10') isbn = id.identifier; });
       var links = vi && vi.imageLinks;
       var src = links && (links.thumbnail || links.smallThumbnail);
       if (src) {
@@ -587,17 +583,81 @@ function fetchBookData(book, persist) {
         imgCache[book.id] = src;
         return src;
       } else {
-        // Try Open Library
-        var olUrl = 'https://covers.openlibrary.org/b/title/' + encodeURIComponent(book.name.split(':')[0].trim()) + '-L.jpg';
-        if (persist) { book.cover_url = olUrl; book.cover_source = 'open_library'; }
-        imgCache[book.id] = olUrl;
-        return olUrl;
+        return tryOpenLibraryCover(book, null, isbn, cleanTitle, book.id, persist);
+      }
+    })
+    .catch(function() {
+      return tryOpenLibraryCover(book, null, '', book.name.split(':')[0].trim(), book.id, persist);
+    });
+}
+
+// Open Library: try ISBN cover -> search API for cover_i -> title slug fallback
+function tryOpenLibraryCover(book, imgEl, isbn, cleanTitle, cacheKey, persist) {
+  var encTitle = encodeURIComponent(cleanTitle);
+  // Strategy 1: ISBN-based cover (most reliable)
+  if (isbn) {
+    var isbnUrl = 'https://covers.openlibrary.org/b/isbn/' + isbn + '-L.jpg';
+    return checkImageExists(isbnUrl).then(function(ok) {
+      if (ok) {
+        if (persist) { book.cover_url = isbnUrl; book.cover_source = 'open_library'; }
+        imgCache[cacheKey] = isbnUrl;
+        if (imgEl) applyCover(imgEl, isbnUrl);
+        return isbnUrl;
+      } else {
+        return olSearchCover(book, imgEl, encTitle, cacheKey, persist);
+      }
+    });
+  } else {
+    return olSearchCover(book, imgEl, encTitle, cacheKey, persist);
+  }
+}
+
+// Open Library search API -> get cover_i -> use ID-based cover URL
+function olSearchCover(book, imgEl, encTitle, cacheKey, persist) {
+  return fetch('https://openlibrary.org/search.json?title=' + encTitle + '&limit=1&fields=cover_i,isbn', {signal: AbortSignal.timeout(6000)})
+    .then(function(r) { return r.json(); })
+    .then(function(d) {
+      var doc = d.docs && d.docs[0];
+      var coverId = doc && doc.cover_i;
+      // Also try ISBN from OL result
+      var olIsbn = doc && doc.isbn && doc.isbn[0];
+      if (coverId) {
+        var idUrl = 'https://covers.openlibrary.org/b/id/' + coverId + '-L.jpg';
+        if (persist) { book.cover_url = idUrl; book.cover_source = 'open_library'; }
+        imgCache[cacheKey] = idUrl;
+        if (imgEl) applyCover(imgEl, idUrl);
+        return idUrl;
+      } else if (olIsbn) {
+        var isbnUrl2 = 'https://covers.openlibrary.org/b/isbn/' + olIsbn + '-L.jpg';
+        if (persist) { book.cover_url = isbnUrl2; book.cover_source = 'open_library'; }
+        imgCache[cacheKey] = isbnUrl2;
+        if (imgEl) applyCover(imgEl, isbnUrl2);
+        return isbnUrl2;
+      } else {
+        // Last resort: title slug (unreliable but better than nothing)
+        var slugUrl = 'https://covers.openlibrary.org/b/title/' + encTitle + '-L.jpg';
+        if (persist) { book.cover_url = slugUrl; book.cover_source = 'open_library'; }
+        imgCache[cacheKey] = slugUrl;
+        if (imgEl) applyCover(imgEl, slugUrl);
+        return slugUrl;
       }
     })
     .catch(function() {
       if (persist) book.cover_source = 'none';
+      imgCache[cacheKey] = null;
       return null;
     });
+}
+
+// Check if an image URL actually returns an image (not a 404/1x1 pixel)
+function checkImageExists(url) {
+  return new Promise(function(resolve) {
+    var img = new Image();
+    img.onload = function() { resolve(img.width > 1 && img.height > 1); };
+    img.onerror = function() { resolve(false); };
+    img.src = url;
+    setTimeout(function() { resolve(false); }, 4000);
+  });
 }
 
 // Admin: fetch + save all books to GitHub
