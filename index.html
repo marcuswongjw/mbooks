@@ -1,0 +1,1013 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>M Books &mdash; Pre-Loved Books Singapore</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --cream:#faf6f0;--warm:#fff8f0;--tan:#c9a96e;--dtan:#a07840;
+  --brown:#5c3d1e;--dbrown:#3a2210;--rust:#b85c38;--ltan:#f0e8d8;
+  --green:#25d366;--dgreen:#1da851;--gold:#f0c040;
+  --shadow:rgba(92,61,30,0.14);
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Lato',sans-serif;background:var(--cream);color:var(--dbrown);}
+a{text-decoration:none;}
+header{background:var(--brown);position:sticky;top:0;z-index:200;box-shadow:0 2px 20px var(--shadow);}
+.hdr{max-width:1300px;margin:0 auto;padding:13px 22px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;}
+.logo{font-family:'Playfair Display',serif;font-size:1.75rem;font-weight:700;color:var(--tan);letter-spacing:2px;flex-shrink:0;line-height:1;cursor:pointer;}
+.logo span{color:rgba(250,246,240,.55);font-weight:300;font-size:0.65rem;display:block;letter-spacing:4px;font-family:'Lato',sans-serif;text-transform:uppercase;margin-top:3px;}
+.hdr-r{display:flex;align-items:center;gap:9px;flex:1;flex-wrap:wrap;}
+.sw{flex:1;min-width:150px;position:relative;}
+.sw input{width:100%;padding:8px 13px 8px 33px;border:1.5px solid rgba(201,169,110,.38);border-radius:22px;background:rgba(255,255,255,.08);color:var(--cream);font-family:'Lato',sans-serif;font-size:0.83rem;outline:none;}
+.sw input::placeholder{color:rgba(250,246,240,.32);}
+.sw input:focus{border-color:var(--tan);background:rgba(255,255,255,.12);}
+.sw svg{position:absolute;left:10px;top:50%;transform:translateY(-50%);width:14px;height:14px;color:var(--tan);}
+.hcnt{color:var(--tan);font-size:0.74rem;white-space:nowrap;font-weight:300;}
+.cart-btn{position:relative;display:flex;align-items:center;gap:6px;padding:8px 15px;background:var(--tan);color:var(--dbrown);border:none;border-radius:22px;font-family:'Lato',sans-serif;font-size:0.8rem;font-weight:700;cursor:pointer;transition:all .2s;white-space:nowrap;flex-shrink:0;}
+.cart-btn:hover{background:#debb80;transform:translateY(-1px);}
+.cbadge{position:absolute;top:-6px;right:-6px;background:var(--rust);color:white;font-size:0.6rem;font-weight:700;min-width:18px;height:18px;border-radius:9px;display:none;align-items:center;justify-content:center;padding:0 4px;}
+.cbadge.show{display:flex;}
+.admin-btn{background:none;border:1.5px solid rgba(201,169,110,.3);color:rgba(201,169,110,.65);font-family:'Lato',sans-serif;font-size:0.72rem;padding:6px 12px;border-radius:18px;cursor:pointer;transition:all .2s;white-space:nowrap;}
+.admin-btn:hover{border-color:var(--tan);color:var(--tan);}
+.fbar{background:var(--ltan);border-bottom:1px solid rgba(201,169,110,.2);padding:8px 22px;}
+.fi{max-width:1300px;margin:0 auto;display:flex;gap:6px;flex-wrap:wrap;align-items:center;}
+.fl{font-size:0.66rem;font-weight:700;color:var(--brown);text-transform:uppercase;letter-spacing:1.5px;margin-right:2px;flex-shrink:0;}
+.gb{padding:4px 11px;border:1.5px solid var(--tan);border-radius:17px;background:transparent;color:var(--brown);font-family:'Lato',sans-serif;font-size:0.7rem;font-weight:700;cursor:pointer;transition:all .2s;white-space:nowrap;}
+.gb:hover,.gb.active{background:var(--brown);color:var(--tan);border-color:var(--brown);}
+.ss{padding:4px 10px;border:1.5px solid var(--tan);border-radius:17px;background:transparent;color:var(--brown);font-family:'Lato',sans-serif;font-size:0.7rem;font-weight:700;cursor:pointer;margin-left:auto;outline:none;}
+.hero{background:linear-gradient(135deg,var(--brown) 0%,#7a4e28 55%,var(--dtan) 100%);padding:36px 24px;text-align:center;position:relative;overflow:hidden;}
+.hero::before{content:'"';position:absolute;font-family:'Playfair Display',serif;font-size:320px;color:rgba(201,169,110,.07);top:-60px;left:6px;line-height:1;pointer-events:none;}
+.hero h2{font-family:'Playfair Display',serif;font-size:1.65rem;color:var(--cream);font-weight:400;font-style:italic;margin-bottom:5px;}
+.hero p{color:var(--tan);font-size:0.8rem;letter-spacing:1px;font-weight:300;}
+.hero-tags{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:12px;}
+.hero-tag{background:rgba(184,92,56,.85);color:white;font-size:0.7rem;font-weight:700;padding:4px 12px;border-radius:20px;letter-spacing:.8px;}
+.hero-tag.green{background:rgba(37,211,102,.85);}
+.hero-wa{display:inline-flex;align-items:center;gap:6px;margin-top:14px;padding:9px 20px;background:var(--green);color:white;border-radius:22px;font-weight:700;font-size:0.8rem;letter-spacing:.5px;transition:transform .2s,box-shadow .2s;}
+.hero-wa:hover{transform:translateY(-2px);box-shadow:0 4px 16px rgba(37,211,102,.4);}
+.section-wrap{max-width:1300px;margin:24px auto 0;padding:0 22px;}
+.section-hdr{display:flex;align-items:center;gap:10px;margin-bottom:16px;}
+.section-hdr h3{font-family:'Playfair Display',serif;font-size:1.15rem;font-weight:700;color:var(--brown);}
+.section-hdr span{font-size:0.72rem;color:var(--dtan);font-weight:300;}
+.picks-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(175px,1fr));gap:16px;}
+.main{max-width:1300px;margin:0 auto;padding:20px 22px;}
+.ri{font-size:0.76rem;color:var(--brown);margin-bottom:13px;font-weight:300;}
+.ri strong{font-weight:700;}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(168px,1fr));gap:16px;}
+.loading-state{text-align:center;padding:60px;color:var(--dtan);font-style:italic;grid-column:1/-1;}
+
+/* CARDS */
+.card{background:var(--warm);border-radius:11px;box-shadow:0 2px 10px var(--shadow);overflow:hidden;cursor:pointer;display:flex;flex-direction:column;border:1px solid rgba(201,169,110,.15);transition:transform .23s,box-shadow .23s;}
+.card:hover{transform:translateY(-5px);box-shadow:0 10px 28px var(--shadow);}
+.card.in-cart{border-color:var(--green);box-shadow:0 2px 10px rgba(37,211,102,.2);}
+.card.featured-card{border-color:var(--gold);}
+.cov{position:relative;width:100%;aspect-ratio:2/3;overflow:hidden;flex-shrink:0;}
+.cov img.bimg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .4s;z-index:2;}
+.cov img.bimg.shown{opacity:1;}
+.ph{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:12px 10px;text-align:center;z-index:1;}
+.ph-Business{background:linear-gradient(150deg,#d4b87a,#9a7030);}
+.ph-Religion{background:linear-gradient(150deg,#b0c4a0,#6a8a60);}
+.ph-NonFiction{background:linear-gradient(150deg,#d4c0a0,#907850);}
+.ph-History{background:linear-gradient(150deg,#d4a090,#904050);}
+.ph-Health{background:linear-gradient(150deg,#a0c4b4,#508a70);}
+.ph-Self{background:linear-gradient(150deg,#d4c080,#908030);}
+.ph-Society{background:linear-gradient(150deg,#c0a4c0,#806080);}
+.ph-Philosophy{background:linear-gradient(150deg,#a0b0c4,#506070);}
+.ph-Tech{background:linear-gradient(150deg,#90b0c4,#305060);}
+.ph-Fiction{background:linear-gradient(150deg,#d4a890,#905040);}
+.ph-ico{font-size:1.8rem;margin-bottom:6px;opacity:.7;}
+.ph-t{font-family:'Playfair Display',serif;font-size:0.67rem;font-weight:600;color:white;line-height:1.3;margin-bottom:4px;display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden;text-shadow:0 1px 3px rgba(0,0,0,.35);}
+.ph-a{font-size:0.56rem;color:rgba(255,255,255,.8);font-style:italic;display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical;overflow:hidden;}
+.gtag{position:absolute;top:6px;left:6px;background:rgba(0,0,0,.5);color:rgba(255,255,255,.9);font-size:0.52rem;font-weight:700;text-transform:uppercase;letter-spacing:.5px;padding:2px 6px;border-radius:8px;backdrop-filter:blur(6px);z-index:3;}
+.star-tag{position:absolute;top:6px;right:6px;background:var(--gold);color:var(--dbrown);font-size:0.6rem;font-weight:700;padding:2px 7px;border-radius:8px;z-index:3;}
+.missing-tag{position:absolute;bottom:6px;left:6px;background:rgba(184,92,56,.85);color:white;font-size:0.52rem;font-weight:700;padding:2px 6px;border-radius:8px;z-index:3;}
+.in-cart-tag{position:absolute;bottom:6px;right:6px;background:var(--green);color:white;font-size:0.56rem;font-weight:700;padding:2px 7px;border-radius:8px;z-index:3;display:none;}
+.card.in-cart .in-cart-tag{display:block;}
+.cbody{padding:10px;flex:1;display:flex;flex-direction:column;justify-content:space-between;gap:5px;}
+.ct{font-family:'Playfair Display',serif;font-size:0.74rem;font-weight:600;line-height:1.35;color:var(--dbrown);display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;}
+.ca{font-size:0.63rem;color:var(--dtan);font-weight:300;font-style:italic;display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical;overflow:hidden;}
+.cf{display:flex;align-items:center;justify-content:space-between;gap:5px;margin-top:4px;}
+.prices{display:flex;flex-direction:column;gap:1px;}
+.rrp-txt{font-size:0.58rem;color:#aaa;text-decoration:line-through;font-weight:300;}
+.pr{font-size:0.9rem;font-weight:700;color:var(--rust);font-family:'Playfair Display',serif;line-height:1;}
+.disc-tag{font-size:0.53rem;font-weight:700;color:white;background:var(--rust);padding:1px 5px;border-radius:5px;display:inline-block;margin-top:1px;}
+.atc{display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;background:var(--brown);color:var(--tan);border:none;border-radius:50%;font-size:1.1rem;cursor:pointer;transition:all .2s;flex-shrink:0;}
+.atc:hover{background:var(--dtan);color:white;transform:scale(1.1);}
+.card.in-cart .atc{background:var(--green);color:white;}
+
+/* PAGINATION */
+.pag{display:flex;justify-content:center;align-items:center;gap:5px;margin-top:30px;flex-wrap:wrap;}
+.pb{padding:6px 12px;border:1.5px solid var(--tan);border-radius:16px;background:transparent;color:var(--brown);font-family:'Lato',sans-serif;font-size:0.73rem;font-weight:700;cursor:pointer;transition:all .2s;}
+.pb:hover,.pb.active{background:var(--brown);color:var(--tan);border-color:var(--brown);}
+.pb:disabled{opacity:.3;cursor:not-allowed;}
+.pi{font-size:0.73rem;color:var(--brown);}
+
+/* CART DRAWER */
+.cart-ov{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:300;display:none;backdrop-filter:blur(3px);}
+.cart-ov.open{display:block;}
+.drawer{position:fixed;top:0;right:0;height:100%;width:410px;max-width:100vw;background:var(--warm);box-shadow:-6px 0 36px rgba(0,0,0,.2);z-index:301;display:flex;flex-direction:column;transform:translateX(100%);transition:transform .3s ease;}
+.drawer.open{transform:translateX(0);}
+.drh{padding:18px 18px 14px;border-bottom:1px solid rgba(201,169,110,.2);background:var(--brown);display:flex;align-items:center;justify-content:space-between;}
+.drh h3{font-family:'Playfair Display',serif;font-size:1.2rem;color:var(--tan);font-weight:700;}
+.drh span{font-size:0.75rem;color:rgba(201,169,110,.65);font-weight:300;}
+.drc{background:none;border:none;color:var(--tan);font-size:1.3rem;cursor:pointer;}
+.dri{flex:1;overflow-y:auto;padding:11px;}
+.dr-empty{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;text-align:center;color:var(--dtan);gap:10px;padding:40px 20px;}
+.dr-empty .eico{font-size:2.8rem;opacity:.4;}
+.ci{display:flex;align-items:center;gap:9px;padding:9px;border-radius:9px;background:var(--cream);margin-bottom:7px;border:1px solid rgba(201,169,110,.14);}
+.ci-info{flex:1;min-width:0;}
+.ci-title{font-family:'Playfair Display',serif;font-size:0.76rem;font-weight:600;line-height:1.3;color:var(--dbrown);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+.ci-auth{font-size:0.63rem;color:var(--dtan);font-style:italic;margin-top:1px;}
+.ci-pp{display:flex;align-items:center;gap:5px;margin-top:3px;}
+.ci-rrp{font-size:0.6rem;color:#bbb;text-decoration:line-through;}
+.ci-price{font-size:0.86rem;font-weight:700;color:var(--rust);font-family:'Playfair Display',serif;}
+.ci-save{font-size:0.58rem;color:var(--green);font-weight:700;}
+.ci-rm{background:none;border:1px solid #ddd;color:#aaa;font-size:0.68rem;cursor:pointer;padding:3px 7px;border-radius:7px;flex-shrink:0;transition:all .2s;}
+.ci-rm:hover{border-color:var(--rust);color:var(--rust);}
+.drf{padding:14px 18px;border-top:1px solid rgba(201,169,110,.2);background:var(--warm);}
+.tots{display:flex;flex-direction:column;gap:3px;margin-bottom:12px;}
+.tr{display:flex;justify-content:space-between;font-size:0.8rem;color:var(--brown);}
+.tr.strike{color:#bbb;font-size:0.73rem;}
+.tr.strike span:last-child{text-decoration:line-through;}
+.tr.main{font-family:'Playfair Display',serif;font-size:1.15rem;font-weight:700;color:var(--dbrown);}
+.tr.saved{color:var(--green);font-weight:700;font-size:0.77rem;}
+.deliv-info{font-size:0.72rem;color:var(--dtan);text-align:center;margin-bottom:10px;padding:7px;background:var(--ltan);border-radius:7px;}
+.deliv-info.free{color:#1a7a3a;font-weight:700;background:rgba(37,211,102,.1);}
+.wa-order{display:flex;align-items:center;justify-content:center;gap:7px;width:100%;padding:12px;background:var(--green);color:white;border:none;border-radius:22px;font-family:'Lato',sans-serif;font-size:0.9rem;font-weight:700;cursor:pointer;transition:all .2s;text-decoration:none;}
+.wa-order:hover{background:var(--dgreen);transform:translateY(-1px);}
+.clr-btn{display:block;width:100%;text-align:center;padding:7px;background:none;border:none;color:#ccc;font-family:'Lato',sans-serif;font-size:0.72rem;cursor:pointer;margin-top:7px;}
+.clr-btn:hover{color:var(--rust);}
+
+/* MODAL */
+.ov{display:none;position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:400;justify-content:center;align-items:center;padding:20px;backdrop-filter:blur(5px);}
+.ov.open{display:flex;}
+.modal{background:var(--warm);border-radius:14px;max-width:660px;width:100%;max-height:90vh;overflow-y:auto;box-shadow:0 24px 80px rgba(0,0,0,.35);position:relative;animation:mIn .27s ease;}
+@keyframes mIn{from{transform:scale(.92);opacity:0;}to{transform:scale(1);opacity:1;}}
+.mcl{position:absolute;top:11px;right:11px;background:none;border:none;font-size:1.3rem;cursor:pointer;color:var(--brown);width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;}
+.mcl:hover{background:var(--ltan);}
+.mb{display:flex;gap:20px;padding:22px;align-items:flex-start;}
+.mc{width:118px;flex-shrink:0;border-radius:8px;overflow:hidden;box-shadow:0 6px 20px var(--shadow);aspect-ratio:2/3;position:relative;}
+.mc img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .4s;z-index:2;}
+.mc img.shown{opacity:1;}
+.mph{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:10px;text-align:center;font-family:'Playfair Display',serif;font-size:0.68rem;font-weight:600;color:white;line-height:1.3;text-shadow:0 1px 3px rgba(0,0,0,.3);z-index:1;}
+.md{flex:1;min-width:0;}
+.mg{font-size:0.63rem;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:var(--tan);margin-bottom:4px;}
+.mt{font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:700;line-height:1.3;color:var(--dbrown);margin-bottom:3px;}
+.ma{font-size:0.77rem;color:var(--dtan);font-style:italic;margin-bottom:11px;}
+.mdesc{font-size:0.81rem;color:var(--brown);line-height:1.7;margin-bottom:12px;font-weight:300;min-height:48px;}
+.mdesc.loading{color:var(--tan);font-style:italic;}
+.m-pp{display:flex;align-items:baseline;gap:9px;margin-bottom:4px;flex-wrap:wrap;}
+.m-rrp{font-size:0.88rem;color:#bbb;text-decoration:line-through;}
+.m-price{font-family:'Playfair Display',serif;font-size:1.55rem;font-weight:700;color:var(--rust);}
+.m-disc{background:var(--rust);color:white;font-size:0.68rem;font-weight:700;padding:3px 8px;border-radius:9px;}
+.m-rrp-src{font-size:0.62rem;color:#bbb;font-style:italic;}
+.m-save{font-size:0.7rem;color:var(--green);font-weight:700;margin-bottom:14px;}
+.m-btns{display:flex;gap:9px;flex-wrap:wrap;margin-bottom:16px;}
+.m-atc{display:inline-flex;align-items:center;gap:6px;padding:10px 18px;background:var(--brown);color:var(--tan);border:none;border-radius:22px;font-family:'Lato',sans-serif;font-weight:700;font-size:0.84rem;cursor:pointer;transition:all .2s;}
+.m-atc:hover{background:var(--dtan);color:white;}
+.m-atc.added{background:var(--green);color:white;}
+.m-wa{display:inline-flex;align-items:center;gap:6px;padding:10px 18px;background:var(--green);color:white;border-radius:22px;font-weight:700;font-size:0.84rem;transition:all .2s;}
+.m-wa:hover{background:var(--dgreen);}
+.sim-section{border-top:1px solid rgba(201,169,110,.15);padding:16px 22px 20px;}
+.sim-title{font-family:'Playfair Display',serif;font-size:0.95rem;font-weight:600;color:var(--brown);margin-bottom:12px;}
+.sim-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
+.sim-card{background:var(--cream);border-radius:8px;overflow:hidden;cursor:pointer;border:1px solid rgba(201,169,110,.15);transition:transform .2s;}
+.sim-card:hover{transform:translateY(-3px);box-shadow:0 6px 16px var(--shadow);}
+.sim-cov{aspect-ratio:2/3;position:relative;overflow:hidden;}
+.sim-cov img{width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .4s;position:absolute;inset:0;z-index:2;}
+.sim-cov img.shown{opacity:1;}
+.sim-ph{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:8px;text-align:center;font-family:'Playfair Display',serif;font-size:0.6rem;color:white;z-index:1;font-weight:600;}
+.sim-body{padding:7px 8px;}
+.sim-ttl{font-family:'Playfair Display',serif;font-size:0.65rem;font-weight:600;color:var(--dbrown);line-height:1.25;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+.sim-price{font-size:0.72rem;font-weight:700;color:var(--rust);margin-top:3px;}
+
+/* ADMIN */
+.admin-ov{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:500;justify-content:center;align-items:center;padding:20px;backdrop-filter:blur(4px);}
+.admin-ov.open{display:flex;}
+.apanel{background:var(--warm);border-radius:14px;max-width:820px;width:100%;max-height:92vh;display:flex;flex-direction:column;box-shadow:0 24px 80px rgba(0,0,0,.4);}
+.ap-hdr{padding:16px 20px;background:var(--dbrown);border-radius:14px 14px 0 0;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;}
+.ap-hdr h3{font-family:'Playfair Display',serif;color:var(--tan);font-size:1.1rem;font-weight:700;}
+.ap-hdr button{background:none;border:none;color:var(--tan);font-size:1.3rem;cursor:pointer;}
+.ap-tabs{display:flex;gap:0;border-bottom:1px solid rgba(201,169,110,.2);background:var(--ltan);}
+.ap-tab{padding:9px 16px;font-family:'Lato',sans-serif;font-size:0.76rem;font-weight:700;color:var(--dtan);background:none;border:none;cursor:pointer;border-bottom:2px solid transparent;transition:all .2s;}
+.ap-tab.active{color:var(--brown);border-bottom-color:var(--brown);}
+.ap-login{padding:30px;text-align:center;}
+.ap-login p{font-size:0.85rem;color:var(--brown);margin-bottom:14px;}
+.ap-login input{width:100%;max-width:280px;padding:10px 16px;border:1.5px solid var(--tan);border-radius:22px;font-family:'Lato',sans-serif;font-size:0.9rem;text-align:center;outline:none;margin-bottom:10px;display:block;margin-left:auto;margin-right:auto;}
+.ap-login button{padding:10px 24px;background:var(--brown);color:var(--tan);border:none;border-radius:22px;font-family:'Lato',sans-serif;font-weight:700;cursor:pointer;font-size:0.86rem;}
+.ap-err{color:var(--rust);font-size:0.78rem;margin-top:6px;}
+.ap-body{flex:1;overflow:hidden;display:flex;flex-direction:column;}
+.ap-toolbar{padding:10px 14px;display:flex;gap:8px;align-items:center;flex-wrap:wrap;}
+.ap-search{flex:1;min-width:160px;padding:8px 14px;border:1.5px solid rgba(201,169,110,.4);border-radius:22px;font-family:'Lato',sans-serif;font-size:0.84rem;outline:none;}
+.ap-filter-btn{padding:5px 12px;border:1.5px solid var(--tan);border-radius:16px;background:transparent;color:var(--brown);font-family:'Lato',sans-serif;font-size:0.71rem;font-weight:700;cursor:pointer;white-space:nowrap;transition:all .2s;}
+.ap-filter-btn.active{background:var(--rust);color:white;border-color:var(--rust);}
+.ap-rows{flex:1;overflow-y:auto;padding:4px 14px 12px;}
+.ap-row{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:8px;background:var(--cream);margin-bottom:6px;border:1px solid rgba(201,169,110,.13);}
+.ap-row.missing{border-left:3px solid var(--rust);}
+.ap-row.flagged{border-left:3px solid var(--gold);}
+.ap-info{flex:1;min-width:0;}
+.ap-title{font-size:0.78rem;font-weight:600;color:var(--dbrown);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.ap-sub{font-size:0.63rem;color:var(--dtan);font-style:italic;margin-top:1px;}
+.ap-flags{display:flex;gap:4px;margin-top:3px;flex-wrap:wrap;}
+.ap-flag{font-size:0.55rem;font-weight:700;padding:1px 6px;border-radius:8px;background:rgba(184,92,56,.15);color:var(--rust);}
+.ap-controls{display:flex;align-items:center;gap:6px;flex-shrink:0;flex-wrap:wrap;justify-content:flex-end;}
+.ap-feat-btn{padding:3px 8px;border:1.5px solid var(--gold);border-radius:10px;background:transparent;color:var(--dtan);font-size:0.63rem;font-weight:700;cursor:pointer;transition:all .2s;white-space:nowrap;}
+.ap-feat-btn.on{background:var(--gold);color:var(--dbrown);}
+.ap-edit-btn{padding:3px 8px;border:1.5px solid rgba(201,169,110,.4);border-radius:10px;background:transparent;color:var(--dtan);font-size:0.63rem;font-weight:700;cursor:pointer;transition:all .2s;white-space:nowrap;}
+.ap-edit-btn:hover{border-color:var(--tan);color:var(--brown);}
+.toggle-wrap{display:flex;align-items:center;gap:4px;}
+.toggle{position:relative;width:36px;height:20px;flex-shrink:0;}
+.toggle input{opacity:0;width:0;height:0;position:absolute;}
+.tslider{position:absolute;inset:0;background:#ccc;border-radius:20px;cursor:pointer;transition:.3s;}
+.tslider:before{content:'';position:absolute;width:14px;height:14px;left:3px;top:3px;background:white;border-radius:50%;transition:.3s;}
+input:checked+.tslider{background:var(--rust);}
+input:checked+.tslider:before{transform:translateX(16px);}
+.sold-lbl{font-size:0.65rem;font-weight:700;color:#bbb;min-width:28px;}
+.sold-lbl.sold{color:var(--rust);}
+.ap-footer{padding:12px 18px;border-top:1px solid rgba(201,169,110,.2);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;}
+.ap-status{font-size:0.74rem;color:var(--dtan);}
+.ap-save-btn{padding:9px 20px;background:var(--green);color:white;border:none;border-radius:22px;font-family:'Lato',sans-serif;font-weight:700;cursor:pointer;font-size:0.85rem;}
+.ap-save-btn:disabled{background:#ccc;cursor:not-allowed;}
+.ap-token-info{font-size:0.7rem;color:var(--dtan);margin-top:4px;}
+
+/* EDIT MODAL */
+.edit-ov{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:600;justify-content:center;align-items:center;padding:20px;}
+.edit-ov.open{display:flex;}
+.edit-panel{background:var(--warm);border-radius:12px;max-width:520px;width:100%;padding:24px;box-shadow:0 16px 60px rgba(0,0,0,.35);}
+.edit-panel h4{font-family:'Playfair Display',serif;font-size:1rem;font-weight:700;color:var(--brown);margin-bottom:16px;}
+.edit-field{margin-bottom:12px;}
+.edit-field label{display:block;font-size:0.72rem;font-weight:700;color:var(--dtan);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;}
+.edit-field input,.edit-field textarea{width:100%;padding:8px 12px;border:1.5px solid rgba(201,169,110,.4);border-radius:8px;font-family:'Lato',sans-serif;font-size:0.84rem;outline:none;}
+.edit-field input:focus,.edit-field textarea:focus{border-color:var(--tan);}
+.edit-field .hint{font-size:0.65rem;color:#aaa;margin-top:3px;}
+.edit-btns{display:flex;gap:8px;justify-content:flex-end;margin-top:16px;}
+.edit-btns button{padding:8px 18px;border-radius:18px;font-family:'Lato',sans-serif;font-weight:700;font-size:0.82rem;cursor:pointer;border:none;}
+.btn-cancel{background:var(--ltan);color:var(--brown);}
+.btn-save{background:var(--brown);color:var(--tan);}
+.cover-preview{width:60px;height:90px;object-fit:cover;border-radius:4px;border:1px solid rgba(201,169,110,.3);margin-top:6px;display:none;}
+
+.empty{text-align:center;padding:55px 24px;color:var(--brown);grid-column:1/-1;}
+.empty h3{font-family:'Playfair Display',serif;font-size:1.3rem;font-style:italic;margin-bottom:7px;}
+footer{background:var(--dbrown);color:var(--tan);text-align:center;padding:18px;font-size:0.73rem;font-weight:300;letter-spacing:.5px;margin-top:48px;}
+@media(max-width:540px){.mb{flex-direction:column;}.mc{width:100%;aspect-ratio:3/2;}.sim-grid{grid-template-columns:repeat(2,1fr);}}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="hdr">
+    <div class="logo" onclick="window.scrollTo({top:0,behavior:'smooth'})">M Books<span>Pre-Loved &middot; Singapore</span></div>
+    <div class="hdr-r">
+      <div class="sw">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="6"/><path d="m21 21-4.35-4.35"/></svg>
+        <input type="text" id="si" placeholder="Search title or author&hellip;" oninput="doSearch()">
+      </div>
+      <div class="hcnt" id="hcnt">Loading&hellip;</div>
+      <button class="cart-btn" onclick="openCart()">&#x1F6D2; Cart<span class="cbadge" id="cbadge"></span></button>
+      <button class="admin-btn" onclick="openAdmin()">&#9881; Admin</button>
+    </div>
+  </div>
+</header>
+
+<div class="fbar">
+  <div class="fi">
+    <span class="fl">Genre:</span>
+    <button class="gb active" onclick="setG('all',this)">All</button>
+    <button class="gb" onclick="setG('Business &amp; Finance',this)">Business &amp; Finance</button>
+    <button class="gb" onclick="setG('Religion &amp; Spirituality',this)">Religion &amp; Spirituality</button>
+    <button class="gb" onclick="setG('General Non-Fiction',this)">General Non-Fiction</button>
+    <button class="gb" onclick="setG('History &amp; Politics',this)">History &amp; Politics</button>
+    <button class="gb" onclick="setG('Health &amp; Lifestyle',this)">Health &amp; Lifestyle</button>
+    <button class="gb" onclick="setG('Self-Help',this)">Self-Help</button>
+    <button class="gb" onclick="setG('Society &amp; Culture',this)">Society &amp; Culture</button>
+    <button class="gb" onclick="setG('Philosophy &amp; Psychology',this)">Philosophy &amp; Psychology</button>
+    <button class="gb" onclick="setG('Technology &amp; Science',this)">Technology &amp; Science</button>
+    <button class="gb" onclick="setG('Fiction',this)">Fiction</button>
+    <select class="ss" id="srt" onchange="doSort()">
+      <option value="az">Sort: A&ndash;Z</option>
+      <option value="pl">Price: Low to High</option>
+      <option value="ph">Price: High to Low</option>
+    </select>
+  </div>
+</div>
+
+<div class="hero">
+  <h2>Every book has a story. Find yours.</h2>
+  <p>974 pre-loved books &middot; thoughtfully read, lovingly passed on</p>
+  <div class="hero-tags">
+    <div class="hero-tag">70% Off RRP</div>
+    <div class="hero-tag green">Free Delivery on 3+ books</div>
+  </div>
+  <a href="https://wa.me/6596304128" target="_blank" class="hero-wa">&#x1F4AC; WhatsApp to Enquire</a>
+</div>
+
+<div class="section-wrap" id="picksSection" style="display:none">
+  <div class="section-hdr">
+    <h3>&#9733; Staff Picks</h3>
+    <span>Curated favourites from the collection</span>
+  </div>
+  <div class="picks-grid" id="picksGrid"></div>
+</div>
+
+<div class="main">
+  <div class="ri" id="ri"></div>
+  <div class="grid" id="grid"><div class="loading-state">Loading books&hellip;</div></div>
+  <div class="pag" id="pag"></div>
+</div>
+
+<!-- CART -->
+<div class="cart-ov" id="cartOv" onclick="closeCart()"></div>
+<div class="drawer" id="drawer">
+  <div class="drh"><div><h3>&#x1F6D2; Your Cart</h3><span id="drwCnt">0 items</span></div><button class="drc" onclick="closeCart()">&#x2715;</button></div>
+  <div class="dri" id="drwItems"></div>
+  <div id="drwFoot" style="display:none" class="drf">
+    <div class="tots">
+      <div class="tr strike"><span>Total RRP</span><span id="tRrp"></span></div>
+      <div class="tr main"><span>Your Total</span><span id="tPrice"></span></div>
+      <div class="tr saved"><span id="tSaved"></span></div>
+    </div>
+    <div class="deliv-info" id="delivInfo"></div>
+    <a id="waBtn" href="#" target="_blank" class="wa-order">&#x1F4AC; Order via WhatsApp</a>
+    <button class="clr-btn" onclick="clearCart()">Clear cart</button>
+  </div>
+</div>
+
+<!-- BOOK MODAL -->
+<div class="ov" id="ov" onclick="if(event.target===this)closeMod()">
+  <div class="modal">
+    <button class="mcl" onclick="closeMod()">&#x2715;</button>
+    <div class="mb" id="mb"></div>
+    <div class="sim-section" id="simSec" style="display:none">
+      <div class="sim-title">You may also like</div>
+      <div class="sim-grid" id="simGrid"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ADMIN -->
+<div class="admin-ov" id="adminOv" onclick="if(event.target===this)closeAdmin()">
+  <div class="apanel">
+    <div class="ap-hdr">
+      <h3>&#9881; M Books Admin</h3>
+      <button onclick="closeAdmin()">&#x2715;</button>
+    </div>
+    <div id="apLogin" class="ap-login">
+      <p>Enter admin password to manage the store.</p>
+      <input type="password" id="apPwd" placeholder="Password" onkeydown="if(event.key==='Enter')doLogin()">
+      <button onclick="doLogin()">Login</button>
+      <div class="ap-err" id="apErr"></div>
+      <div class="ap-token-info" style="margin-top:12px;">
+        Changes are saved directly to GitHub and go live in ~30 seconds.
+      </div>
+    </div>
+    <div id="apBody" class="ap-body" style="display:none">
+      <div class="ap-tabs">
+        <button class="ap-tab active" onclick="switchTab('all',this)">All Books</button>
+        <button class="ap-tab" onclick="switchTab('missing',this)">&#x26A0; Missing Info</button>
+        <button class="ap-tab" onclick="switchTab('featured',this)">&#9733; Featured</button>
+        <button class="ap-tab" onclick="switchTab('sold',this)">Sold</button>
+      </div>
+      <div class="ap-toolbar">
+        <input class="ap-search" type="text" id="apSearch" placeholder="Search books&hellip;" oninput="filterAdmin()">
+        <button class="ap-filter-btn" id="missingFilterBtn" onclick="toggleMissingFilter()" style="display:none">No Cover Only</button>
+      </div>
+      <div class="ap-rows" id="apRows"></div>
+      <div class="ap-footer">
+        <span class="ap-status" id="apStatus"></span>
+        <button class="ap-save-btn" id="apSaveBtn" onclick="saveToGitHub()">&#128190; Save to GitHub</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- EDIT MODAL -->
+<div class="edit-ov" id="editOv" onclick="if(event.target===this)closeEdit()">
+  <div class="edit-panel">
+    <h4 id="editTitle">Edit Book</h4>
+    <div class="edit-field">
+      <label>Title</label>
+      <input type="text" id="editName">
+    </div>
+    <div class="edit-field">
+      <label>Author</label>
+      <input type="text" id="editAuthor">
+    </div>
+    <div class="edit-field">
+      <label>RRP (S$)</label>
+      <input type="number" id="editRrp" min="1" max="200">
+      <div class="hint">Selling price will auto-update to 70% off this RRP</div>
+    </div>
+    <div class="edit-field">
+      <label>Cover Image URL</label>
+      <input type="url" id="editCover" placeholder="https://..." oninput="previewCover()">
+      <div class="hint">Paste any direct image URL (Google Images, Open Library, imgbb, etc.)</div>
+      <img class="cover-preview" id="coverPreview">
+    </div>
+    <div class="edit-field">
+      <label>Notes / Flag</label>
+      <input type="text" id="editNotes" placeholder="e.g. wrong title, missing cover, check edition&hellip;">
+    </div>
+    <div class="edit-btns">
+      <button class="btn-cancel" onclick="closeEdit()">Cancel</button>
+      <button class="btn-save" onclick="saveEdit()">Save</button>
+    </div>
+  </div>
+</div>
+
+<footer>&copy; M Books &middot; Pre-loved books in Singapore &middot; Self-collect: Tampines or Paya Lebar &middot; WhatsApp +65 9630 4128</footer>
+
+<script>
+// Config
+var GITHUB_USER = 'marcuswongjw';
+var GITHUB_REPO = 'mbooks';
+var GITHUB_BRANCH = 'main';
+var BOOKS_URL = 'https://raw.githubusercontent.com/marcuswongjw/mbooks/main/books.json';
+var ADMIN_PWD = 'mbooks2024';
+var WA = '6596304128';
+var PER = 48;
+var MIN_FREE = 3;
+var DELIVERY = 4;
+
+// State
+var BOOKS = [];
+var cart = [];
+var filtered = [];
+var pg = 1, genre = 'all', srch = '', srt = 'az';
+var imgCache = {};
+var adminTab = 'all';
+var missingFilterOn = false;
+var editingId = null;
+var githubToken = '';
+var booksFileSha = '';
+
+var phClass = {
+  'Business & Finance':'ph-Business','Religion & Spirituality':'ph-Religion',
+  'General Non-Fiction':'ph-NonFiction','History & Politics':'ph-History',
+  'Health & Lifestyle':'ph-Health','Self-Help':'ph-Self',
+  'Society & Culture':'ph-Society','Philosophy & Psychology':'ph-Philosophy',
+  'Technology & Science':'ph-Tech','Fiction':'ph-Fiction'
+};
+var phIcon = {
+  'Business & Finance':'\uD83D\uDCBC','Religion & Spirituality':'\u271D\uFE0F',
+  'General Non-Fiction':'\uD83D\uDCD6','History & Politics':'\uD83C\uDFDB\uFE0F',
+  'Health & Lifestyle':'\uD83C\uDF3F','Self-Help':'\u2B50',
+  'Society & Culture':'\uD83C\uDF0F','Philosophy & Psychology':'\uD83E\uDDE0',
+  'Technology & Science':'\uD83D\uDD2C','Fiction':'\uD83C\uDF19'
+};
+
+// \u2500\u2500 INIT \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500
+function init() {
+  cart = [];
+  try { cart = JSON.parse(localStorage.getItem('mbooks_cart') || '[]'); } catch(e) {}
+  fetchBooks();
+}
+
+function fetchBooks() {
+  // Add cache-buster so GitHub Pages serves fresh data
+  fetch(BOOKS_URL + '?v=' + Date.now())
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+      BOOKS = data;
+      updateCartUI();
+      renderStaffPicks();
+      apply();
+      // Fetch real RRPs from Google Books in background
+      fetchRRPsBackground();
+    })
+    .catch(function(e) {
+      document.getElementById('grid').innerHTML = '<div class="empty"><h3>Could not load books</h3><p>Please try refreshing the page.</p></div>';
+    });
+}
+
+// \u2500\u2500 COVER LOADING \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500
+function loadCover(book, imgEl) {
+  if (!imgEl || !imgEl.isConnected) return;
+  var key = book.id;
+  // Use saved cover_url if available
+  if (book.cover_url) { applyCover(imgEl, book.cover_url); return; }
+  if (imgCache[key]) { applyCover(imgEl, imgCache[key]); return; }
+  if (imgCache[key] === null) return;
+  var cleanTitle = book.name.split(':')[0].trim().replace(/['"!]/g,'').substring(0,50);
+  var q = encodeURIComponent('"' + cleanTitle + '"');
+  // Try Google Books first
+  fetch('https://www.googleapis.com/books/v1/volumes?q=intitle:' + q + '&maxResults=1&fields=items(volumeInfo(imageLinks,listPrice),saleInfo(listPrice))', {signal: AbortSignal.timeout(6000)})
+    .then(function(r) { return r.json(); })
+    .then(function(d) {
+      var vi = d.items && d.items[0] && d.items[0].volumeInfo;
+      var si = d.items && d.items[0] && d.items[0].saleInfo;
+      var links = vi && vi.imageLinks;
+      var src = links && (links.thumbnail || links.smallThumbnail);
+      // Cache RRP if found
+      var lp = (si && si.listPrice) || (vi && vi.listPrice);
+      if (lp && lp.amount) {
+        var sgd = lp.currencyCode === 'SGD' ? lp.amount : Math.round(lp.amount * 1.35);
+        if (sgd > 0 && book.rrp_source !== 'manual') {
+          book.rrp = Math.round(sgd);
+          book.price = Math.round(sgd * 0.30);
+          book.rrp_source = 'google_books';
+        }
+      }
+      if (src) {
+        src = src.replace('http://','https://').replace('zoom=1','zoom=3').replace('&edge=curl','');
+        imgCache[key] = src;
+        book.cover_source = 'google_books';
+        applyCover(imgEl, src);
+      } else {
+        // Fallback: Open Library
+        var olUrl = 'https://covers.openlibrary.org/b/title/' + encodeURIComponent(cleanTitle) + '-L.jpg';
+        imgCache[key] = olUrl;
+        book.cover_source = 'open_library';
+        applyCover(imgEl, olUrl);
+      }
+    })
+    .catch(function() {
+      var olUrl = 'https://covers.openlibrary.org/b/title/' + encodeURIComponent(cleanTitle) + '-L.jpg';
+      imgCache[key] = olUrl;
+      book.cover_source = 'open_library';
+      applyCover(imgEl, olUrl);
+    });
+}
+
+function applyCover(imgEl, src) {
+  if (!imgEl || !imgEl.isConnected) return;
+  imgEl.onload = function() { imgEl.classList.add('shown'); };
+  imgEl.onerror = function() {
+    imgEl.classList.remove('shown');
+    imgEl.src = '';
+    imgEl.onerror = null;
+    // Mark as missing cover
+    var id = parseInt(imgEl.dataset.id || imgEl.dataset.simid || 0);
+    if (id) {
+      var b = BOOKS.find(function(x){return x.id===id;});
+      if (b) { b.cover_source = null; }
+    }
+  };
+  imgEl.src = src;
+}
+
+// Fetch RRPs in background for books that have genre estimates
+function fetchRRPsBackground() {
+  var needRrp = BOOKS.filter(function(b) { return b.rrp_source === 'genre_estimate'; }).slice(0, 50);
+  var delay = 0;
+  needRrp.forEach(function(book) {
+    setTimeout(function() {
+      var q = encodeURIComponent('"' + book.name.split(':')[0].trim().substring(0,40) + '"');
+      fetch('https://www.googleapis.com/books/v1/volumes?q=intitle:' + q + '&maxResults=1&fields=items(volumeInfo(listPrice),saleInfo(listPrice))', {signal:AbortSignal.timeout(5000)})
+        .then(function(r) { return r.json(); })
+        .then(function(d) {
+          var vi = d.items && d.items[0] && d.items[0].volumeInfo;
+          var si = d.items && d.items[0] && d.items[0].saleInfo;
+          var lp = (si && si.listPrice) || (vi && vi.listPrice);
+          if (lp && lp.amount) {
+            var sgd = lp.currencyCode === 'SGD' ? lp.amount : Math.round(lp.amount * 1.35);
+            if (sgd > 5) {
+              book.rrp = Math.round(sgd);
+              book.price = Math.round(sgd * 0.30);
+              book.rrp_source = 'google_books';
+            }
+          }
+        }).catch(function(){});
+    }, delay);
+    delay += 200;
+  });
+}
+
+// \u2500\u2500 HELPERS \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500
+function esc(s) {
+  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function isMissing(b) {
+  return !b.cover_url && b.cover_source === null;
+}
+
+function makeCard(b) {
+  var cls = phClass[b.genre] || 'ph-NonFiction';
+  var ico = phIcon[b.genre] || '\uD83D\uDCD6';
+  var auth = b.author !== 'Unknown' ? b.author : '';
+  var ic = inCart(b.id);
+  var miss = isMissing(b);
+  var html = '<div class="card' + (ic?' in-cart':'') + (b.featured?' featured-card':'') + '" data-id="' + b.id + '" onclick="openBook(' + b.id + ')">'
+    + '<div class="cov">'
+    + '<img class="bimg" data-id="' + b.id + '" alt="' + esc(b.name) + '">'
+    + '<div class="ph ' + cls + '"><div class="ph-ico">' + ico + '</div><div class="ph-t">' + esc(b.name) + '</div>' + (auth?'<div class="ph-a">'+esc(auth)+'</div>':'') + '</div>'
+    + '<div class="gtag">' + esc(b.genre) + '</div>'
+    + (b.featured?'<div class="star-tag">\u2B50 Pick</div>':'')
+    + (miss?'<div class="missing-tag">&#x26A0; Missing info</div>':'')
+    + '<div class="in-cart-tag">\u2713 In cart</div>'
+    + '</div>'
+    + '<div class="cbody">'
+    + '<div><div class="ct">' + esc(b.name) + '</div>' + (auth?'<div class="ca">'+esc(auth)+'</div>':'') + '</div>'
+    + '<div class="cf">'
+    + '<div class="prices"><span class="rrp-txt">RRP S$' + b.rrp + '</span><span class="pr">S$' + b.price + '</span><span class="disc-tag">70% OFF</span></div>'
+    + '<button class="atc" onclick="event.stopPropagation();addToCart(' + b.id + ')">' + (ic?'\u2713':'+') + '</button>'
+    + '</div></div></div>';
+  return html;
+}
+
+// \u2500\u2500 LAZY LOAD COVERS \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500
+var iObs = null;
+function setupLazy() {
+  if (iObs) iObs.disconnect();
+  iObs = new IntersectionObserver(function(entries) {
+    entries.forEach(function(e) {
+      if (!e.isIntersecting) return;
+      var img = e.target;
+      var id = parseInt(img.dataset.id);
+      var book = BOOKS.find(function(b) { return b.id === id; });
+      if (book && !img.src) loadCover(book, img);
+      iObs.unobserve(img);
+    });
+  }, {rootMargin:'250px'});
+  document.querySelectorAll('.bimg[data-id]').forEach(function(img) { iObs.observe(img); });
+}
+
+// \u2500\u2500 RENDER \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500
+function renderStaffPicks() {
+  var featured = BOOKS.filter(function(b) { return b.featured && !b.sold; });
+  var sec = document.getElementById('picksSection');
+  if (!featured.length) { sec.style.display='none'; return; }
+  sec.style.display = 'block';
+  var grid = document.getElementById('picksGrid');
+  grid.innerHTML = featured.map(makeCard).join('');
+  setTimeout(function() {
+    grid.querySelectorAll('.bimg[data-id]').forEach(function(img) {
+      var id = parseInt(img.dataset.id);
+      var book = BOOKS.find(function(b) { return b.id===id; });
+      if (book && !img.src) loadCover(book, img);
+    });
+  }, 80);
+}
+
+function renderGrid() {
+  var start = (pg-1)*PER, slice = filtered.slice(start, start+PER);
+  var g = document.getElementById('grid');
+  if (!slice.length) { g.innerHTML='<div class="empty"><h3>No books found</h3><p>Try a different search or genre.</p></div>'; return; }
+  g.innerHTML = slice.map(makeCard).join('');
+  setTimeout(setupLazy, 50);
+}
+
+function renderPag() {
+  var tot = Math.ceil(filtered.length/PER), p = document.getElementById('pag');
+  if (tot<=1) { p.innerHTML=''; return; }
+  var h = '<button class="pb" onclick="goP('+(pg-1)+')" '+(pg===1?'disabled':'')+'>&#8592; Prev</button>';
+  var r=[];
+  for (var i=1;i<=tot;i++) { if(i===1||i===tot||(i>=pg-2&&i<=pg+2))r.push(i); else if(r[r.length-1]!=='...')r.push('...'); }
+  r.forEach(function(x) {
+    if(x==='...')h+='<span class="pi">...</span>';
+    else h+='<button class="pb'+(x===pg?' active':'')+'" onclick="goP('+x+')">'+x+'</button>';
+  });
+  h+='<button class="pb" onclick="goP('+(pg+1)+')" '+(pg===tot?'disabled':'')+'>Next &#8594;</button>';
+  p.innerHTML = h;
+}
+
+function updInfo() {
+  var n=filtered.length, s=(pg-1)*PER+1, e=Math.min(pg*PER,n);
+  var avail = BOOKS.filter(function(b){return!b.sold;}).length;
+  document.getElementById('hcnt').textContent = avail + ' books';
+  document.getElementById('ri').innerHTML = n ? 'Showing <strong>'+s+'&ndash;'+e+'</strong> of <strong>'+n+'</strong> book'+(n!==1?'s':'') : ' ';
+}
+
+function apply() {
+  filtered = BOOKS.filter(function(b) {
+    if (b.sold) return false;
+    var mg = genre==='all' || b.genre===genre;
+    var ms = !srch || b.name.toLowerCase().indexOf(srch)>-1 || b.author.toLowerCase().indexOf(srch)>-1;
+    return mg && ms;
+  });
+  if(srt==='pl') filtered.sort(function(a,b){return a.price-b.price;});
+  else if(srt==='ph') filtered.sort(function(a,b){return b.price-a.price;});
+  else filtered.sort(function(a,b){return a.name.localeCompare(b.name);});
+  pg = 1;
+  renderGrid(); renderPag(); updInfo();
+}
+
+function setG(g,btn) { genre=g; document.querySelectorAll('.gb').forEach(function(b){b.classList.remove('active');});btn.classList.add('active');apply(); }
+function doSearch() { srch=document.getElementById('si').value.toLowerCase(); apply(); }
+function doSort() { srt=document.getElementById('srt').value; apply(); }
+function goP(p) {
+  var tot=Math.ceil(filtered.length/PER);
+  if(p<1||p>tot) return;
+  pg=p; renderGrid(); renderPag(); updInfo();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+// \u2500\u2500 CART \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500
+function saveCart() { localStorage.setItem('mbooks_cart',JSON.stringify(cart)); }
+function inCart(id) { return cart.some(function(c){return c.id===id;}); }
+
+function addToCart(id) {
+  if (inCart(id)) { removeFromCart(id); return; }
+  var b = BOOKS.find(function(x){return x.id===id;});
+  if (!b||b.sold) return;
+  cart.push({id:b.id,name:b.name,author:b.author,price:b.price,rrp:b.rrp});
+  saveCart(); updateCartUI(); syncCard(id);
+}
+function removeFromCart(id) {
+  cart = cart.filter(function(c){return c.id!==id;});
+  saveCart(); updateCartUI(); syncCard(id); renderDrawer();
+}
+function clearCart() {
+  if(!confirm('Clear your entire cart?')) return;
+  cart=[]; saveCart(); updateCartUI();
+  document.querySelectorAll('.card.in-cart').forEach(function(c){
+    c.classList.remove('in-cart');
+    var b=c.querySelector('.atc'); if(b) b.textContent='+';
+  });
+  renderDrawer();
+}
+function syncCard(id) {
+  var ic=inCart(id);
+  document.querySelectorAll('.card[data-id="'+id+'"]').forEach(function(card){
+    card.classList.toggle('in-cart',ic);
+    var btn=card.querySelector('.atc'); if(btn) btn.textContent=ic?'\u2713':'+';
+  });
+}
+function updateCartUI() {
+  var n=cart.length;
+  var badge=document.getElementById('cbadge');
+  badge.textContent=n; badge.classList.toggle('show',n>0);
+  document.getElementById('drwCnt').textContent=n+' item'+(n!==1?'s':'');
+  renderDrawer();
+}
+function renderDrawer() {
+  var items=document.getElementById('drwItems'), foot=document.getElementById('drwFoot');
+  if (!cart.length) {
+    items.innerHTML='<div class="dr-empty"><div class="eico">\uD83D\uDED2</div><p>Your cart is empty.<br>Browse and tap <b>+</b> to add.</p></div>';
+    foot.style.display='none'; return;
+  }
+  foot.style.display='block';
+  var free=cart.length>=MIN_FREE, need=MIN_FREE-cart.length;
+  var nb=free?'rgba(37,211,102,.12)':'rgba(201,169,110,.1)';
+  var nc=free?'#1a7a3a':'#a07840';
+  var nt=free?'\uD83D\uDE9A Free delivery unlocked! ('+cart.length+' books)':'Add '+need+' more book'+(need!==1?'s':'')+' for free delivery \uD83D\uDE9A';
+  var html='<div style="background:'+nb+';border:1px solid '+(free?'rgba(37,211,102,.3)':'rgba(201,169,110,.25)')+';color:'+nc+';border-radius:8px;padding:8px 12px;margin-bottom:10px;font-size:0.74rem;font-weight:700;">'+nt+'</div>';
+  cart.forEach(function(c) {
+    var sv=c.rrp-c.price, auth=(c.author&&c.author!=='Unknown')?c.author:'';
+    html+='<div class="ci"><div class="ci-info"><div class="ci-title">'+esc(c.name)+'</div>'+(auth?'<div class="ci-auth">'+esc(auth)+'</div>':'')+'<div class="ci-pp"><span class="ci-rrp">S$'+c.rrp+'</span><span class="ci-price">S$'+c.price+'</span><span class="ci-save">Save S$'+sv+'</span></div></div><button class="ci-rm" onclick="removeFromCart('+c.id+')">&#x2715;</button></div>';
+  });
+  items.innerHTML=html;
+  var tR=cart.reduce(function(s,c){return s+c.rrp;},0);
+  var tP=cart.reduce(function(s,c){return s+c.price;},0);
+  var tS=tR-tP, del=free?0:DELIVERY, grand=tP+del;
+  document.getElementById('tRrp').textContent='S$'+tR;
+  document.getElementById('tPrice').textContent='S$'+grand;
+  document.getElementById('tSaved').textContent='\uD83C\uDF89 You saved S$'+tS+' (70% off RRP)';
+  var di=document.getElementById('delivInfo');
+  if(free){di.textContent='\uD83D\uDE9A Free delivery included!';di.className='deliv-info free';}
+  else{di.textContent='+ S$'+DELIVERY+' delivery \u00B7 or free self-collect (Tampines / Paya Lebar)';di.className='deliv-info';}
+  var lines=['Hi Marcus! I would like to order these pre-loved books from M Books:',''];
+  cart.forEach(function(c,i){lines.push((i+1)+'. '+c.name+' by '+c.author+' - S$'+c.price);});
+  lines.push('','Subtotal: S$'+tP+' ('+cart.length+' book'+(cart.length!==1?'s':'')+')');
+  lines.push(free?'Delivery: Free!':'Delivery: S$'+DELIVERY);
+  lines.push('Grand Total: S$'+grand,'','Please confirm availability. Thank you!');
+  document.getElementById('waBtn').href='https://wa.me/'+WA+'?text='+encodeURIComponent(lines.join('\n'));
+}
+function openCart(){document.getElementById('cartOv').classList.add('open');document.getElementById('drawer').classList.add('open');document.body.style.overflow='hidden';renderDrawer();}
+function closeCart(){document.getElementById('cartOv').classList.remove('open');document.getElementById('drawer').classList.remove('open');document.body.style.overflow='';}
+
+// \u2500\u2500 MODAL \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500
+function openBook(id) {
+  var b=BOOKS.find(function(x){return x.id===id;}); if(!b) return;
+  var cls=phClass[b.genre]||'ph-NonFiction', ico=phIcon[b.genre]||'\uD83D\uDCD6';
+  var auth=b.author!=='Unknown'?b.author:'', ic=inCart(b.id), sv=b.rrp-b.price;
+  var rrpSrc = b.rrp_source==='google_books'?'(verified RRP)':b.rrp_source==='manual'?'(manual RRP)':'(estimated RRP)';
+  document.getElementById('mb').innerHTML =
+    '<div class="mc ph '+cls+'"><img id="mimg" data-id="'+b.id+'" alt="'+esc(b.name)+'"><div class="mph">'+ico+' '+esc(b.name)+'</div></div>'
+    +'<div class="md">'
+    +'<div class="mg">'+esc(b.genre)+'</div>'
+    +'<div class="mt">'+esc(b.name)+'</div>'
+    +(auth?'<div class="ma">by '+esc(auth)+'</div>':'')
+    +'<div class="mdesc loading" id="mdesc">\u2726 Generating description\u2026</div>'
+    +'<div class="m-pp"><span class="m-rrp">RRP S$'+b.rrp+'</span><span class="m-price">S$'+b.price+'</span><span class="m-disc">70% OFF</span></div>'
+    +'<div class="m-rrp-src">'+rrpSrc+'</div>'
+    +'<div class="m-save">\uD83D\uDCB0 You save S$'+sv+' on this book!</div>'
+    +'<div class="m-btns">'
+    +'<button class="m-atc'+(ic?' added':'')+'" id="matcBtn" onclick="modalCart('+b.id+')">'+(ic?'\u2713 In Cart':'+ Add to Cart')+'</button>'
+    +'<a href="'+makeBuyUrl(b)+'" target="_blank" class="m-wa">\uD83D\uDCAC Buy Now</a>'
+    +'</div></div>';
+  var mimg=document.getElementById('mimg');
+  if(b.cover_url) applyCover(mimg,b.cover_url);
+  else if(imgCache[b.id]) applyCover(mimg,imgCache[b.id]);
+  else loadCover(b,mimg);
+  // Similar books
+  var sim=BOOKS.filter(function(x){return x.genre===b.genre&&x.id!==b.id&&!x.sold;}).slice(0,3);
+  var ss=document.getElementById('simSec');
+  if(sim.length){
+    ss.style.display='block';
+    var sg='';
+    sim.forEach(function(s){
+      var sc=phClass[s.genre]||'ph-NonFiction',si=phIcon[s.genre]||'\uD83D\uDCD6';
+      sg+='<div class="sim-card" onclick="openBook('+s.id+')"><div class="sim-cov ph '+sc+'"><img data-simid="'+s.id+'" alt="'+esc(s.name)+'"><div class="sim-ph">'+si+' '+esc(s.name)+'</div></div><div class="sim-body"><div class="sim-ttl">'+esc(s.name)+'</div><div class="sim-price">S$'+s.price+'</div></div></div>';
+    });
+    document.getElementById('simGrid').innerHTML=sg;
+    sim.forEach(function(s){
+      var img=document.querySelector('.sim-cov img[data-simid="'+s.id+'"]');
+      if(img){img.onload=function(){img.classList.add('shown');};img.onerror=function(){img.style.display='none';};loadCover(s,img);}
+    });
+  } else { ss.style.display='none'; }
+  document.getElementById('ov').classList.add('open');
+  document.body.style.overflow='hidden';
+  loadDesc(b);
+}
+function makeBuyUrl(b) {
+  var msg='Hi! I would like to buy "'+b.name+'" by '+b.author+' for S$'+b.price+' (70% off RRP S$'+b.rrp+'). Is it available?';
+  return 'https://wa.me/'+WA+'?text='+encodeURIComponent(msg);
+}
+function modalCart(id) {
+  addToCart(id);
+  var btn=document.getElementById('matcBtn');
+  if(btn){var ic=inCart(id);btn.textContent=ic?'\u2713 In Cart':'+ Add to Cart';btn.classList.toggle('added',ic);}
+}
+function loadDesc(b) {
+  fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:150,
+      messages:[{role:'user',content:'Write a punchy 2-sentence description for "'+b.name+'" by '+b.author+'. Genre: '+b.genre+'. Start directly, no "this book". Entice a buyer.'}]})
+  }).then(function(r){return r.json();}).then(function(d){
+    var el=document.getElementById('mdesc');
+    if(el){el.classList.remove('loading');el.textContent=(d.content&&d.content[0]&&d.content[0].text)||'A wonderful pre-loved read.';}
+  }).catch(function(){
+    var el=document.getElementById('mdesc');
+    if(el){el.classList.remove('loading');el.textContent='A wonderful pre-loved read available at M Books Singapore.';}
+  });
+}
+function closeMod(){document.getElementById('ov').classList.remove('open');document.body.style.overflow='';}
+
+// \u2500\u2500 ADMIN \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500
+function openAdmin(){document.getElementById('adminOv').classList.add('open');document.body.style.overflow='hidden';}
+function closeAdmin(){document.getElementById('adminOv').classList.remove('open');document.body.style.overflow='';}
+
+function doLogin() {
+  if (document.getElementById('apPwd').value !== ADMIN_PWD) {
+    document.getElementById('apErr').textContent='Incorrect password.'; return;
+  }
+  // Get/prompt for GitHub token
+  var storedToken = localStorage.getItem('mbooks_gh_token');
+  if (storedToken) {
+    githubToken = storedToken;
+  } else {
+    githubToken = prompt('Enter your GitHub Personal Access Token (stored locally only):');
+    if (githubToken) localStorage.setItem('mbooks_gh_token', githubToken);
+  }
+  // Get current file SHA for updates
+  fetch('https://api.github.com/repos/'+GITHUB_USER+'/'+GITHUB_REPO+'/contents/books.json',
+    {headers:{'Authorization':'token '+githubToken}})
+    .then(function(r){return r.json();})
+    .then(function(d){booksFileSha=d.sha;})
+    .catch(function(){});
+  document.getElementById('apLogin').style.display='none';
+  document.getElementById('apBody').style.display='flex';
+  renderAdminRows();
+}
+
+var adminTab='all', missingFilterOn=false;
+
+function switchTab(tab, btn) {
+  adminTab=tab;
+  document.querySelectorAll('.ap-tab').forEach(function(t){t.classList.remove('active');});
+  btn.classList.add('active');
+  var mfb=document.getElementById('missingFilterBtn');
+  if(mfb) mfb.style.display=tab==='missing'?'block':'none';
+  renderAdminRows();
+}
+
+function toggleMissingFilter() {
+  missingFilterOn=!missingFilterOn;
+  document.getElementById('missingFilterBtn').classList.toggle('active',missingFilterOn);
+  renderAdminRows();
+}
+
+function filterAdmin() { renderAdminRows(); }
+
+function getAdminList() {
+  var q=(document.getElementById('apSearch')||{}).value||'';
+  q=q.toLowerCase();
+  return BOOKS.filter(function(b) {
+    var matchQ=!q||b.name.toLowerCase().indexOf(q)>-1||b.author.toLowerCase().indexOf(q)>-1;
+    if (!matchQ) return false;
+    if (adminTab==='missing') return isMissing(b)||b.rrp_source==='genre_estimate';
+    if (adminTab==='featured') return b.featured;
+    if (adminTab==='sold') return b.sold;
+    return true;
+  });
+}
+
+function renderAdminRows() {
+  var list=getAdminList();
+  var missing=BOOKS.filter(function(b){return isMissing(b)||b.rrp_source==='genre_estimate';}).length;
+  var sold=BOOKS.filter(function(b){return b.sold;}).length;
+  var feat=BOOKS.filter(function(b){return b.featured;}).length;
+  document.getElementById('apStatus').textContent=sold+' sold \u00B7 '+feat+' featured \u00B7 '+missing+' need attention';
+  if(!list.length){document.getElementById('apRows').innerHTML='<div style="text-align:center;padding:30px;color:var(--dtan);font-style:italic;">No books match.</div>';return;}
+  document.getElementById('apRows').innerHTML=list.map(function(b){
+    var flags=[];
+    if(isMissing(b)) flags.push('No cover');
+    if(b.rrp_source==='genre_estimate') flags.push('Est. RRP');
+    if(b.notes) flags.push('Note: '+b.notes.substring(0,20));
+    var rowCls='ap-row'+(isMissing(b)?' missing':'')+(b.notes?' flagged':'');
+    return '<div class="'+rowCls+'">'
+      +'<div class="ap-info">'
+      +'<div class="ap-title">'+esc(b.name)+'</div>'
+      +'<div class="ap-sub">'+esc(b.author)+' \u00B7 RRP S$'+b.rrp+(b.rrp_source==='google_books'?' \u2713':'')+'</div>'
+      +(flags.length?'<div class="ap-flags">'+flags.map(function(f){return '<span class="ap-flag">'+f+'</span>';}).join('')+'</div>':'')
+      +'</div>'
+      +'<div class="ap-controls">'
+      +'<button class="ap-feat-btn'+(b.featured?' on':'')+'" onclick="toggleFeat('+b.id+')">'+(b.featured?'\u2B50 Pick':'\u2606 Pick')+'</button>'
+      +'<button class="ap-edit-btn" onclick="openEdit('+b.id+')">&#9998; Edit</button>'
+      +'<div class="toggle-wrap">'
+      +'<label class="toggle"><input type="checkbox" '+(b.sold?'checked':'')+' onchange="toggleSold('+b.id+',this.checked)"><span class="tslider"></span></label>'
+      +'<span class="sold-lbl'+(b.sold?' sold':'')+'"> '+(b.sold?'Sold':'Avail')+'</span>'
+      +'</div></div></div>';
+  }).join('');
+}
+
+function toggleFeat(id) {
+  var b=BOOKS.find(function(x){return x.id===id;}); if(!b) return;
+  b.featured=!b.featured; renderAdminRows(); renderStaffPicks();
+}
+function toggleSold(id,val) {
+  var b=BOOKS.find(function(x){return x.id===id;}); if(!b) return;
+  b.sold=val;
+  if(val){cart=cart.filter(function(c){return c.id!==id;});saveCart();updateCartUI();}
+  renderAdminRows(); apply();
+}
+
+// \u2500\u2500 EDIT MODAL \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500
+function openEdit(id) {
+  var b=BOOKS.find(function(x){return x.id===id;}); if(!b) return;
+  editingId=id;
+  document.getElementById('editTitle').textContent='Edit: '+b.name.substring(0,40);
+  document.getElementById('editName').value=b.name;
+  document.getElementById('editAuthor').value=b.author;
+  document.getElementById('editRrp').value=b.rrp;
+  document.getElementById('editCover').value=b.cover_url||'';
+  document.getElementById('editNotes').value=b.notes||'';
+  var prev=document.getElementById('coverPreview');
+  if(b.cover_url){prev.src=b.cover_url;prev.style.display='block';}
+  else {prev.style.display='none';}
+  document.getElementById('editOv').classList.add('open');
+}
+function closeEdit(){document.getElementById('editOv').classList.remove('open');editingId=null;}
+
+function previewCover() {
+  var url=document.getElementById('editCover').value;
+  var prev=document.getElementById('coverPreview');
+  if(url){prev.src=url;prev.style.display='block';}
+  else{prev.style.display='none';}
+}
+
+function saveEdit() {
+  if(!editingId) return;
+  var b=BOOKS.find(function(x){return x.id===editingId;}); if(!b) return;
+  b.name=document.getElementById('editName').value.trim()||b.name;
+  b.author=document.getElementById('editAuthor').value.trim()||b.author;
+  var newRrp=parseInt(document.getElementById('editRrp').value)||b.rrp;
+  b.rrp=newRrp; b.price=Math.round(newRrp*0.30); b.rrp_source='manual';
+  var coverUrl=document.getElementById('editCover').value.trim();
+  b.cover_url=coverUrl||null;
+  b.cover_source=coverUrl?'manual':null;
+  b.notes=document.getElementById('editNotes').value.trim();
+  // Clear image cache for this book so it reloads
+  delete imgCache[editingId];
+  closeEdit();
+  renderAdminRows(); apply(); renderStaffPicks();
+}
+
+// \u2500\u2500 SAVE TO GITHUB \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500
+function saveToGitHub() {
+  if (!githubToken) { alert('No GitHub token set. Please log out and log back in.'); return; }
+  var btn=document.getElementById('apSaveBtn');
+  btn.disabled=true; btn.textContent='Saving\u2026';
+  document.getElementById('apStatus').textContent='Uploading to GitHub\u2026';
+  var content=JSON.stringify(BOOKS, null, 2);
+  var encoded=btoa(unescape(encodeURIComponent(content)));
+  var payload={message:'Admin update: book data',content:encoded,branch:GITHUB_BRANCH};
+  if(booksFileSha) payload.sha=booksFileSha;
+  fetch('https://api.github.com/repos/'+GITHUB_USER+'/'+GITHUB_REPO+'/contents/books.json',{
+    method:'PUT',
+    headers:{'Authorization':'token '+githubToken,'Content-Type':'application/json'},
+    body:JSON.stringify(payload)
+  }).then(function(r){return r.json();})
+    .then(function(d){
+      if(d.content && d.content.sha){
+        booksFileSha=d.content.sha;
+        btn.disabled=false; btn.textContent='\u2714 Saved!';
+        document.getElementById('apStatus').textContent='\u2705 Saved to GitHub. Live in ~30 seconds.';
+        setTimeout(function(){btn.textContent='\uD83D\uDCBE Save to GitHub';},3000);
+      } else {
+        btn.disabled=false; btn.textContent='\uD83D\uDCBE Save to GitHub';
+        document.getElementById('apStatus').textContent='Error: '+(d.message||'Unknown error');
+      }
+    }).catch(function(e){
+      btn.disabled=false; btn.textContent='\uD83D\uDCBE Save to GitHub';
+      document.getElementById('apStatus').textContent='Save failed. Check token permissions.';
+    });
+}
+
+document.addEventListener('keydown',function(e){if(e.key==='Escape'){closeMod();closeCart();closeAdmin();closeEdit();}});
+window.addEventListener('DOMContentLoaded', init);
+</script>
+</body>
+</html>
