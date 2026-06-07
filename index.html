@@ -376,7 +376,10 @@ footer{background:var(--dbrown);color:var(--tan);text-align:center;padding:18px;
       <div class="ap-rows" id="apRows"></div>
       <div class="ap-footer">
         <span class="ap-status" id="apStatus"></span>
-        <button class="ap-save-btn" id="apSaveBtn" onclick="saveToGitHub()">&#128190; Save to GitHub</button>
+        <div style="display:flex;gap:8px;">
+          <button id="fetchSaveBtn" onclick="fetchAndSaveAll()" style="padding:9px 16px;background:var(--dtan);color:white;border:none;border-radius:22px;font-family:'Lato',sans-serif;font-weight:700;cursor:pointer;font-size:0.82rem;" title="Fetch real covers + RRPs from Google Books for all books, then save to GitHub">&#x1F50D; Fetch &amp; Save All</button>
+          <button class="ap-save-btn" id="apSaveBtn" onclick="saveToGitHub()">&#128190; Save to GitHub</button>
+        </div>
       </div>
     </div>
   </div>
@@ -547,30 +550,87 @@ function applyCover(imgEl, src) {
   imgEl.src = src;
 }
 
-// Fetch RRPs in background for books that have genre estimates
+// Fetch cover+RRP in background (non-blocking, updates in memory only)
 function fetchRRPsBackground() {
-  var needRrp = BOOKS.filter(function(b) { return b.rrp_source === 'genre_estimate'; }).slice(0, 50);
-  var delay = 0;
-  needRrp.forEach(function(book) {
+  // Lightweight background pass - just updates in-memory for current session
+  // Use "Fetch & Save All" in admin to persist to GitHub
+  var need = BOOKS.filter(function(b) { return b.rrp_source === 'genre_estimate'; }).slice(0, 20);
+  var delay = 500;
+  need.forEach(function(book) {
     setTimeout(function() {
-      var q = encodeURIComponent('"' + book.name.split(':')[0].trim().substring(0,40) + '"');
-      fetch('https://www.googleapis.com/books/v1/volumes?q=intitle:' + q + '&maxResults=1&fields=items(volumeInfo(listPrice),saleInfo(listPrice))', {signal:AbortSignal.timeout(5000)})
-        .then(function(r) { return r.json(); })
-        .then(function(d) {
-          var vi = d.items && d.items[0] && d.items[0].volumeInfo;
-          var si = d.items && d.items[0] && d.items[0].saleInfo;
-          var lp = (si && si.listPrice) || (vi && vi.listPrice);
-          if (lp && lp.amount) {
-            var sgd = lp.currencyCode === 'SGD' ? lp.amount : Math.round(lp.amount * 1.35);
-            if (sgd > 5) {
-              book.rrp = Math.round(sgd);
-              book.price = Math.round(sgd * 0.30);
-              book.rrp_source = 'google_books';
-            }
-          }
-        }).catch(function(){});
+      fetchBookData(book, false);
     }, delay);
-    delay += 200;
+    delay += 300;
+  });
+}
+
+// Fetch Google Books data for one book; persist=true saves cover_url/rrp to book object
+function fetchBookData(book, persist) {
+  var q = encodeURIComponent('"' + book.name.split(':')[0].trim().replace(/['"!]/g,'').substring(0,45) + '"');
+  return fetch('https://www.googleapis.com/books/v1/volumes?q=intitle:' + q + '&maxResults=1&fields=items(volumeInfo(imageLinks,listPrice),saleInfo(listPrice))', {signal:AbortSignal.timeout(7000)})
+    .then(function(r) { return r.json(); })
+    .then(function(d) {
+      var vi = d.items && d.items[0] && d.items[0].volumeInfo;
+      var si = d.items && d.items[0] && d.items[0].saleInfo;
+      // RRP
+      var lp = (si && si.listPrice) || (vi && vi.listPrice);
+      if (lp && lp.amount && book.rrp_source !== 'manual') {
+        var sgd = lp.currencyCode === 'SGD' ? Math.round(lp.amount) : Math.round(lp.amount * 1.35);
+        if (sgd > 4) { book.rrp = sgd; book.price = Math.round(sgd * 0.30); book.rrp_source = 'google_books'; }
+      }
+      // Cover
+      var links = vi && vi.imageLinks;
+      var src = links && (links.thumbnail || links.smallThumbnail);
+      if (src) {
+        src = src.replace('http://','https://').replace('zoom=1','zoom=3').replace('&edge=curl','');
+        if (persist) { book.cover_url = src; book.cover_source = 'google_books'; }
+        imgCache[book.id] = src;
+        return src;
+      } else {
+        // Try Open Library
+        var olUrl = 'https://covers.openlibrary.org/b/title/' + encodeURIComponent(book.name.split(':')[0].trim()) + '-L.jpg';
+        if (persist) { book.cover_url = olUrl; book.cover_source = 'open_library'; }
+        imgCache[book.id] = olUrl;
+        return olUrl;
+      }
+    })
+    .catch(function() {
+      if (persist) book.cover_source = 'none';
+      return null;
+    });
+}
+
+// Admin: fetch + save all books to GitHub
+var fetchSaveProgress = 0;
+function fetchAndSaveAll() {
+  if (!githubToken) { alert('Please log in as admin first.'); return; }
+  var btn = document.getElementById('fetchSaveBtn');
+  var statusEl = document.getElementById('apStatus');
+  var total = BOOKS.length;
+  fetchSaveProgress = 0;
+  btn.disabled = true;
+  statusEl.textContent = 'Fetching data from Google Books... (0/' + total + ')';
+
+  var promises = BOOKS.map(function(book, idx) {
+    return new Promise(function(resolve) {
+      setTimeout(function() {
+        fetchBookData(book, true).then(function() {
+          fetchSaveProgress++;
+          if (fetchSaveProgress % 20 === 0) {
+            statusEl.textContent = 'Fetching... (' + fetchSaveProgress + '/' + total + ')';
+          }
+          resolve();
+        });
+      }, idx * 250); // 250ms between requests to avoid rate limiting
+    });
+  });
+
+  Promise.all(promises).then(function() {
+    statusEl.textContent = 'All fetched! Saving to GitHub...';
+    saveToGitHub(function() {
+      btn.disabled = false;
+      statusEl.textContent = 'Done! All covers & RRPs saved to GitHub.';
+    });
   });
 }
 
@@ -580,7 +640,9 @@ function esc(s) {
 }
 
 function isMissing(b) {
-  return !b.cover_url && b.cover_source === null;
+  // Missing = no saved cover_url AND cover was confirmed unfound (cover_source='none')
+  // OR author is Unknown OR has an admin note flagging it
+  return (b.cover_source === 'none') || (!b.author || b.author === 'Unknown') || (b.notes && b.notes.length > 0);
 }
 
 function makeCard(b) {
@@ -976,7 +1038,7 @@ function saveEdit() {
 }
 
 // \u2500\u2500 SAVE TO GITHUB \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500
-function saveToGitHub() {
+function saveToGitHub(callback) {
   if (!githubToken) { alert('No GitHub token set. Please log out and log back in.'); return; }
   var btn=document.getElementById('apSaveBtn');
   btn.disabled=true; btn.textContent='Saving\u2026';
@@ -996,6 +1058,7 @@ function saveToGitHub() {
         btn.disabled=false; btn.textContent='\u2714 Saved!';
         document.getElementById('apStatus').textContent='\u2705 Saved to GitHub. Live in ~30 seconds.';
         setTimeout(function(){btn.textContent='\uD83D\uDCBE Save to GitHub';},3000);
+        if (typeof callback === 'function') callback();
       } else {
         btn.disabled=false; btn.textContent='\uD83D\uDCBE Save to GitHub';
         document.getElementById('apStatus').textContent='Error: '+(d.message||'Unknown error');
