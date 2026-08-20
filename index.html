@@ -252,21 +252,37 @@ input:checked+.tslider:before{transform:translateX(16px);}
 .empty h3{font-family:'Playfair Display',serif;font-size:1.3rem;font-style:italic;margin-bottom:7px;}
 footer{background:var(--dbrown);color:var(--tan);text-align:center;padding:18px;font-size:0.73rem;font-weight:300;letter-spacing:.5px;margin-top:48px;}
 @media(max-width:540px){.mb{flex-direction:column;}.mc{width:100%;aspect-ratio:3/2;}.sim-grid{grid-template-columns:repeat(2,1fr);}}
+
+/* ── STOREFRONT REDESIGN ─────────────────────────────────────────── */
+:root{--cream:#f5f7f8;--warm:#fff;--tan:#d9e4ed;--dtan:#5d6b7d;--brown:#173b5b;--dbrown:#122235;--rust:#b74631;--ltan:#edf2f5;--green:#087f3e;--dgreen:#066a34;--gold:#e3a83b;--shadow:rgba(18,34,53,.10);--line:#dce5ec;--ink:#122235;}
+html{scroll-behavior:smooth;}body{background:var(--cream);color:var(--ink);overflow-x:hidden;}button,a,input,select{font:inherit;}button{touch-action:manipulation;}button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid #e3a83b;outline-offset:3px;}
+header{background:rgba(255,255,255,.94);border-bottom:1px solid var(--line);box-shadow:none;backdrop-filter:blur(14px);}.hdr{max-width:1240px;min-height:76px;padding:12px 24px;gap:28px;flex-wrap:nowrap;}.logo{color:var(--dbrown);font-size:1.55rem;letter-spacing:.2px;}.logo span{color:var(--dtan);font-size:.59rem;letter-spacing:2.2px;margin-top:5px;}.brand-link{border:0;background:transparent;text-align:left;cursor:pointer;padding:0;flex-shrink:0;}.hdr-r{gap:10px;flex-wrap:nowrap;min-width:0;}.sw{max-width:540px;min-width:170px;}.sw input{height:42px;padding:10px 14px 10px 38px;border:1px solid var(--line);border-radius:12px;background:#f8fafb;color:var(--ink);font-size:.88rem;}.sw input::placeholder{color:#78879a;}.sw input:focus{border-color:var(--brown);background:white;box-shadow:0 0 0 3px rgba(23,59,91,.10);}.sw svg{left:13px;color:var(--dtan);width:16px;height:16px;}.hcnt{font-size:.75rem;color:var(--dtan);}.cart-btn{min-height:42px;padding:9px 15px;background:var(--dbrown);color:white;border-radius:12px;box-shadow:0 5px 12px rgba(18,34,53,.13);}.cart-btn:hover{background:var(--brown);transform:translateY(-1px);}.cbadge{background:var(--rust);}.admin-btn{min-width:42px;min-height:42px;padding:8px 11px;border:1px solid var(--line);border-radius:12px;color:var(--dtan);background:white;font-size:0;}.admin-btn::before{content:'⚙';font-size:1rem;}.admin-btn:hover{border-color:var(--brown);color:var(--brown);}
+.fbar{background:white;border-bottom:1px solid var(--line);padding:0;}.fi{max-width:1240px;min-height:54px;padding:7px 24px;gap:7px;flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;}.fi::-webkit-scrollbar{display:none;}.fl{font-size:.68rem;color:var(--dtan);letter-spacing:1.1px;}.gb{min-height:34px;padding:6px 12px;border:1px solid var(--line);border-radius:9px;background:#fff;color:#4c5b6d;font-size:.73rem;box-shadow:0 1px 1px rgba(18,34,53,.02);}.gb:hover,.gb.active{background:var(--dbrown);color:#fff;border-color:var(--dbrown);}.ss{min-height:34px;margin-left:9px;padding:6px 10px;border:1px solid var(--line);border-radius:9px;background:#f8fafb;color:var(--brown);font-size:.73rem;}
+.hero{min-height:380px;padding:76px 24px 66px;text-align:left;background:radial-gradient(circle at 87% 16%,rgba(227,168,59,.34),transparent 22%),radial-gradient(circle at 13% 88%,rgba(89,157,151,.22),transparent 30%),linear-gradient(125deg,#102339 0%,#173b5b 58%,#265b78 100%);overflow:hidden;}.hero::before{content:'';width:460px;height:460px;border:1px solid rgba(255,255,255,.14);border-radius:50%;top:-250px;left:auto;right:-70px;opacity:1;}.hero-inner{max-width:1240px;margin:0 auto;position:relative;z-index:1;}.hero-eyebrow{display:inline-flex;align-items:center;gap:8px;color:#c9e6df;font-size:.72rem;font-weight:700;letter-spacing:1.25px;text-transform:uppercase;margin-bottom:18px;}.hero-eyebrow::before{content:'';width:26px;height:1px;background:#c9e6df;}.hero h1,.hero h2{max-width:720px;font-size:clamp(2.4rem,5vw,4.6rem);line-height:1.03;letter-spacing:-1.7px;color:white;font-style:normal;margin-bottom:18px;}.hero p{max-width:600px;color:#c7d5e2;font-size:1.02rem;line-height:1.6;letter-spacing:0;font-weight:400;}.hero-actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:30px;}.hero-wa{min-height:46px;margin:0;padding:12px 19px;background:#fff;color:var(--dbrown);border-radius:12px;font-size:.86rem;letter-spacing:0;box-shadow:0 8px 20px rgba(0,0,0,.15);}.hero-wa:hover{background:#f7fbfd;box-shadow:0 10px 24px rgba(0,0,0,.18);}.hero-browse{display:inline-flex;align-items:center;justify-content:center;min-height:46px;padding:12px 19px;border:1px solid rgba(255,255,255,.48);border-radius:12px;color:#fff;font-weight:700;font-size:.86rem;}.hero-browse:hover{background:rgba(255,255,255,.12);}.hero-tags{justify-content:flex-start;gap:8px;margin-top:24px;}.hero-tag{background:rgba(255,255,255,.12);color:#e8f1f7;border:1px solid rgba(255,255,255,.16);font-size:.7rem;padding:6px 10px;letter-spacing:.2px;}.hero-tag.green{background:rgba(8,127,62,.44);color:#f2fff7;}
+.trust-section{max-width:1240px;margin:-28px auto 0;padding:0 24px;position:relative;z-index:2;}.trust-grid{display:grid;grid-template-columns:repeat(3,1fr);background:#fff;border:1px solid var(--line);border-radius:16px;box-shadow:0 12px 30px rgba(18,34,53,.08);overflow:hidden;}.trust-item{padding:20px 22px;display:flex;gap:12px;align-items:flex-start;border-right:1px solid var(--line);}.trust-item:last-child{border-right:none;}.trust-icon{width:36px;height:36px;display:grid;place-items:center;flex:0 0 auto;border-radius:10px;background:#edf4f7;color:var(--brown);font-size:1rem;}.trust-item strong{display:block;color:var(--dbrown);font-size:.84rem;margin:2px 0 4px;}.trust-item span{display:block;color:var(--dtan);font-size:.74rem;line-height:1.45;}
+.section-wrap{max-width:1240px;margin:36px auto 0;padding:0 24px;}.main{max-width:1240px;padding:38px 24px 50px;}.ri{font-size:.82rem;color:var(--dtan);margin-bottom:18px;}.ri strong{color:var(--dbrown);}.grid{grid-template-columns:repeat(auto-fill,minmax(196px,1fr));gap:20px;}.card{background:#fff;border:1px solid var(--line);border-radius:14px;box-shadow:none;overflow:hidden;cursor:default;}.card:hover{transform:translateY(-4px);box-shadow:0 12px 26px rgba(18,34,53,.10);}.card.in-cart{border-color:#74b98e;box-shadow:0 0 0 2px rgba(8,127,62,.10);}.cov{background:#e7edf1;}.gtag{top:10px;left:10px;background:rgba(18,34,53,.82);font-size:.55rem;padding:3px 7px;letter-spacing:.55px;}.star-tag{top:10px;right:10px;background:#f9d98f;color:var(--dbrown);}.missing-tag{bottom:10px;left:10px;background:var(--rust);}.in-cart-tag{bottom:10px;right:10px;background:var(--green);}.cbody{padding:14px 14px 6px;gap:12px;}.cf{margin:0 14px 14px;}.card-open{display:block;width:100%;padding:0;border:0;background:transparent;text-align:left;cursor:pointer;}.card-open:hover .ct{text-decoration:underline;text-decoration-color:#9db6c9;text-underline-offset:3px;}.ct{font-size:.91rem;line-height:1.34;color:var(--dbrown);-webkit-line-clamp:2;}.ca{font-size:.72rem;color:var(--dtan);margin-top:4px;}.cf{gap:9px;align-items:flex-end;}.prices{gap:2px;}.rrp-txt{font-size:.65rem;color:#8792a0;}.pr{font-size:1.2rem;color:var(--dbrown);}.disc-tag{width:max-content;background:#f8e4dd;color:#97351f;padding:3px 6px;border-radius:5px;font-size:.55rem;}.atc{width:44px;height:44px;flex-shrink:0;border-radius:12px;background:var(--dbrown);color:white;font-size:1.35rem;}.atc:hover{background:var(--brown);transform:none;}.card.in-cart .atc{background:var(--green);}.pag{margin-top:34px;gap:8px;}.pb{min-height:38px;padding:7px 13px;border:1px solid var(--line);border-radius:9px;background:#fff;color:var(--brown);}.pb:hover,.pb.active{background:var(--dbrown);border-color:var(--dbrown);color:#fff;}
+.drawer{width:430px;background:#fff;}.drh{padding:20px;background:var(--dbrown);}.drc{width:44px;height:44px;display:grid;place-items:center;border-radius:10px;}.dri{padding:16px;}.wa-order{min-height:46px;background:var(--green);border-radius:11px;}.wa-order:hover{background:var(--dgreen);}.ov{background:rgba(10,24,39,.68);padding:16px;}.modal{max-width:740px;border-radius:18px;}.mcl{top:12px;right:12px;width:44px;height:44px;background:#f2f5f7;color:var(--dbrown);z-index:5;}.mb{gap:28px;padding:32px;}.mc{width:160px;border-radius:12px;}.mg{color:var(--dtan);}.mt{font-size:1.45rem;color:var(--dbrown);}.ma{color:var(--dtan);}.mdesc{color:#455468;min-height:auto;}.m-save{color:var(--green);}.m-atc,.m-wa{min-height:46px;border-radius:11px;padding:11px 17px;}.m-atc{background:var(--dbrown);color:white;}.m-atc:hover{background:var(--brown);}.m-atc.added{background:var(--green);}.m-wa{background:var(--green);}.m-wa:hover{background:var(--dgreen);}.sim-section{padding:20px 32px 28px;border-color:var(--line);}.sim-card{border-color:var(--line);border-radius:10px;}.sim-card:hover{box-shadow:0 8px 18px var(--shadow);}footer{margin-top:0;padding:28px 24px;background:var(--dbrown);color:#c6d4df;font-size:.75rem;letter-spacing:.1px;}
+@media(max-width:760px){.hdr{min-height:auto;padding:12px 16px;gap:12px;flex-wrap:wrap;}.hdr-r{width:100%;flex:1 0 100%;order:2;display:grid;grid-template-columns:minmax(0,1fr) 46px;gap:8px;}.sw{width:100%;max-width:none;min-width:0;}.hcnt{display:none;}.cart-btn{width:46px;min-height:42px;padding:0;justify-content:center;gap:0;font-size:0;}.cart-btn::before{content:'🛒';font-size:1rem;}.admin-btn{display:none;}.fi{padding:8px 16px;min-height:50px;}.fl{display:none;}.ss{margin-left:0;}.hero{min-height:0;padding:62px 20px 74px;}.hero h1,.hero h2{font-size:clamp(2.3rem,12vw,3.25rem);letter-spacing:-1px;}.hero p{font-size:.94rem;}.trust-section{margin:-22px auto 0;padding:0 16px;}.trust-grid{grid-template-columns:1fr;border-radius:14px;}.trust-item{padding:16px;border-right:0;border-bottom:1px solid var(--line);}.trust-item:last-child{border-bottom:0;}.main{padding:30px 16px 40px;}.grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;}.cbody{padding:11px 11px 5px;gap:10px;}.cf{margin:0 11px 11px;}.ct{font-size:.8rem;}.ca{font-size:.65rem;}.pr{font-size:1.08rem;}.rrp-txt{font-size:.58rem;}.atc{width:42px;height:42px;border-radius:11px;}.mb{flex-direction:column;padding:24px;gap:18px;}.mc{width:100%;aspect-ratio:3/2;}.m-btns{display:grid;grid-template-columns:1fr;}.m-atc,.m-wa{justify-content:center;}.sim-section{padding:18px 24px 24px;}}
+@media(max-width:360px){.grid{grid-template-columns:1fr;}.hero-actions{display:grid;grid-template-columns:1fr;}.hero-wa,.hero-browse{width:100%;}}
+.sim-card{display:block;width:100%;padding:0;text-align:left;font:inherit;}.drh h2{font-family:'Playfair Display',serif;font-size:1.2rem;color:var(--tan);font-weight:700;}.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0;}.catalogue-head{display:flex;align-items:flex-end;justify-content:space-between;gap:18px;margin-bottom:20px;}.catalogue-head h2{font-family:'Playfair Display',serif;font-size:clamp(1.55rem,3vw,2.15rem);line-height:1.12;color:var(--dbrown);}.section-kicker{display:block;color:var(--dtan);font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;margin-bottom:7px;}.catalogue-head .ri{margin:0;text-align:right;}.section-hdr h2{font-family:'Playfair Display',serif;font-size:1.45rem;color:var(--dbrown);}@media(max-width:760px){.catalogue-head{align-items:flex-start;flex-direction:column;gap:8px;}.catalogue-head .ri{text-align:left;}}
 </style>
 </head>
 <body>
 
 <header>
   <div class="hdr">
-    <div class="logo" onclick="window.scrollTo({top:0,behavior:'smooth'})">M Books<span>Pre-Loved &middot; Singapore</span></div>
+    <button class="brand-link" type="button" onclick="window.scrollTo({top:0,behavior:'smooth'})" aria-label="Back to the top of M Books">
+      <span class="logo">M Books<span>Pre-Loved &middot; Singapore</span></span>
+    </button>
     <div class="hdr-r">
       <div class="sw">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="6"/><path d="m21 21-4.35-4.35"/></svg>
-        <input type="text" id="si" placeholder="Search title or author&hellip;" oninput="doSearch()">
+        <label class="sr-only" for="si">Search books by title or author</label>
+        <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="6"/><path d="m21 21-4.35-4.35"/></svg>
+        <input type="search" id="si" placeholder="Search title or author" oninput="doSearch()">
       </div>
       <div class="hcnt" id="hcnt">Loading&hellip;</div>
-      <button class="cart-btn" onclick="openCart()">&#x1F6D2; Cart<span class="cbadge" id="cbadge"></span></button>
-      <button class="admin-btn" onclick="openAdmin()">&#9881; Admin</button>
+      <button class="cart-btn" type="button" onclick="openCart()" aria-label="Open cart">&#x1F6D2; Cart<span class="cbadge" id="cbadge"></span></button>
+      <button class="admin-btn" type="button" onclick="openAdmin()" aria-label="Open store administration" title="Store administration">&#9881; Admin</button>
     </div>
   </div>
 </header>
@@ -293,34 +309,48 @@ footer{background:var(--dbrown);color:var(--tan);text-align:center;padding:18px;
   </div>
 </div>
 
-<div class="hero">
-  <h2>Every book has a story. Find yours.</h2>
-  <p>735 pre-loved books &middot; thoughtfully read, lovingly passed on</p>
-  <div class="hero-tags">
-    <div class="hero-tag">70% Off RRP</div>
-    <div class="hero-tag green">Free Delivery on 3+ books</div>
+<section class="hero" aria-labelledby="heroTitle">
+  <div class="hero-inner">
+    <div class="hero-eyebrow">Pre-loved books, Singapore</div>
+    <h1 id="heroTitle">Find a book worth keeping.</h1>
+    <p>Explore hundreds of thoughtfully priced books, each ready for its next chapter.</p>
+    <div class="hero-actions">
+      <a href="#catalogue" class="hero-wa">Browse the collection <span aria-hidden="true">→</span></a>
+      <a href="https://wa.me/6596304128" target="_blank" rel="noopener" class="hero-browse">&#x1F4AC; Ask a question</a>
+    </div>
+    <div class="hero-tags" aria-label="M Books offers">
+      <div class="hero-tag">Prices from S$6</div>
+      <div class="hero-tag green">Free delivery on 3+ books</div>
+    </div>
   </div>
-  <a href="https://wa.me/6596304128" target="_blank" class="hero-wa">&#x1F4AC; WhatsApp to Enquire</a>
-</div>
+</section>
 
-<div class="section-wrap" id="picksSection" style="display:none">
+<section class="trust-section" aria-label="Shopping essentials">
+  <div class="trust-grid">
+    <div class="trust-item"><div class="trust-icon" aria-hidden="true">✦</div><div><strong>One copy, one reader next</strong><span>Every title is a pre-loved, single-copy find.</span></div></div>
+    <div class="trust-item"><div class="trust-icon" aria-hidden="true">↗</div><div><strong>Delivery or self-collect</strong><span>Choose local delivery or collect from Tampines / Paya Lebar.</span></div></div>
+    <div class="trust-item"><div class="trust-icon" aria-hidden="true">✓</div><div><strong>Simple order request</strong><span>Add your books, then confirm availability on WhatsApp.</span></div></div>
+  </div>
+</section>
+
+<section class="section-wrap" id="picksSection" style="display:none" aria-labelledby="picksTitle">
   <div class="section-hdr">
-    <h3>&#9733; Staff Picks</h3>
-    <span>Curated favourites from the collection</span>
+    <h2 id="picksTitle">Staff picks</h2>
+    <span>A small edit from the collection</span>
   </div>
   <div class="picks-grid" id="picksGrid"></div>
-</div>
+</section>
 
-<div class="main">
-  <div class="ri" id="ri"></div>
+<main class="main" id="catalogue" aria-labelledby="catalogueTitle">
+  <div class="catalogue-head"><div><span class="section-kicker">The collection</span><h2 id="catalogueTitle">Browse available books</h2></div><div class="ri" id="ri"></div></div>
   <div class="grid" id="grid"><div class="loading-state">Loading books&hellip;</div></div>
   <div class="pag" id="pag"></div>
-</div>
+</main>
 
 <!-- CART -->
 <div class="cart-ov" id="cartOv" onclick="closeCart()"></div>
-<div class="drawer" id="drawer">
-  <div class="drh"><div><h3>&#x1F6D2; Your Cart</h3><span id="drwCnt">0 items</span></div><button class="drc" onclick="closeCart()">&#x2715;</button></div>
+<div class="drawer" id="drawer" role="dialog" aria-modal="true" aria-labelledby="cartTitle">
+  <div class="drh"><div><h2 id="cartTitle">&#x1F6D2; Your Cart</h2><span id="drwCnt">0 items</span></div><button class="drc" id="drawerClose" type="button" onclick="closeCart()" aria-label="Close cart">&#x2715;</button></div>
   <div class="dri" id="drwItems"></div>
   <div id="drwFoot" style="display:none" class="drf">
     <div class="tots">
@@ -329,15 +359,15 @@ footer{background:var(--dbrown);color:var(--tan);text-align:center;padding:18px;
       <div class="tr saved"><span id="tSaved"></span></div>
     </div>
     <div class="deliv-info" id="delivInfo"></div>
-    <a id="waBtn" href="#" target="_blank" class="wa-order">&#x1F4AC; Order via WhatsApp</a>
+    <a id="waBtn" href="#" target="_blank" rel="noopener" class="wa-order">&#x1F4AC; Send order request</a>
     <button class="clr-btn" onclick="clearCart()">Clear cart</button>
   </div>
 </div>
 
 <!-- BOOK MODAL -->
 <div class="ov" id="ov" onclick="if(event.target===this)closeMod()">
-  <div class="modal">
-    <button class="mcl" onclick="closeMod()">&#x2715;</button>
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle" tabindex="-1">
+    <button class="mcl" id="modalClose" type="button" onclick="closeMod()" aria-label="Close book details">&#x2715;</button>
     <div class="mb" id="mb"></div>
     <div class="sim-section" id="simSec" style="display:none">
       <div class="sim-title">You may also like</div>
@@ -464,6 +494,7 @@ var phIcon = {
 function init() {
   cart = [];
   try { cart = JSON.parse(localStorage.getItem('mbooks_cart') || '[]'); } catch(e) {}
+  document.querySelectorAll('.gb').forEach(function(btn){btn.setAttribute('aria-pressed',btn.classList.contains('active')?'true':'false');});
   fetchBooks();
 }
 
@@ -711,7 +742,9 @@ function makeCard(b) {
   var auth = b.author !== 'Unknown' ? b.author : '';
   var ic = inCart(b.id);
   var miss = isMissing(b);
-  var html = '<div class="card' + (ic?' in-cart':'') + (b.featured?' featured-card':'') + '" data-id="' + b.id + '" onclick="openBook(' + b.id + ')">'
+  var actionLabel = (ic?'Remove ':'Add ') + b.name + (ic?' from cart':' to cart');
+  var html = '<article class="card' + (ic?' in-cart':'') + (b.featured?' featured-card':'') + '" data-id="' + b.id + '">'
+    + '<button class="card-open" type="button" onclick="openBook(' + b.id + ')" aria-label="View details for ' + esc(b.name) + '">'
     + '<div class="cov">'
     + '<img class="bimg" data-id="' + b.id + '" alt="' + esc(b.name) + '">'
     + '<div class="ph ' + cls + '"><div class="ph-ico">' + ico + '</div><div class="ph-t">' + esc(b.name) + '</div>' + (auth?'<div class="ph-a">'+esc(auth)+'</div>':'') + '</div>'
@@ -722,10 +755,11 @@ function makeCard(b) {
     + '</div>'
     + '<div class="cbody">'
     + '<div><div class="ct">' + esc(b.name) + '</div>' + (auth?'<div class="ca">'+esc(auth)+'</div>':'') + '</div>'
+    + '</button>'
     + '<div class="cf">'
     + '<div class="prices"><span class="rrp-txt">RRP S$' + b.rrp + '</span><span class="pr">S$' + b.price + '</span><span class="disc-tag">70% OFF</span></div>'
-    + '<button class="atc" onclick="event.stopPropagation();addToCart(' + b.id + ')">' + (ic?'\u2713':'+') + '</button>'
-    + '</div></div></div>';
+    + '<button class="atc" type="button" onclick="addToCart(' + b.id + ')" aria-label="' + esc(actionLabel) + '" aria-pressed="' + (ic?'true':'false') + '">' + (ic?'\u2713':'+') + '</button>'
+    + '</div></div></article>';
   return html;
 }
 
@@ -806,7 +840,7 @@ function apply() {
   renderGrid(); renderPag(); updInfo();
 }
 
-function setG(g,btn) { genre=g; document.querySelectorAll('.gb').forEach(function(b){b.classList.remove('active');});btn.classList.add('active');apply(); }
+function setG(g,btn) { genre=g; document.querySelectorAll('.gb').forEach(function(b){b.classList.remove('active');b.setAttribute('aria-pressed','false');});btn.classList.add('active');btn.setAttribute('aria-pressed','true');apply(); }
 function doSearch() { srch=document.getElementById('si').value.toLowerCase(); apply(); }
 function doSort() { srt=document.getElementById('srt').value; apply(); }
 function goP(p) {
@@ -836,7 +870,7 @@ function clearCart() {
   cart=[]; saveCart(); updateCartUI();
   document.querySelectorAll('.card.in-cart').forEach(function(c){
     c.classList.remove('in-cart');
-    var b=c.querySelector('.atc'); if(b) b.textContent='+';
+    var b=c.querySelector('.atc'); if(b){b.textContent='+';b.setAttribute('aria-pressed','false');}
   });
   renderDrawer();
 }
@@ -844,7 +878,9 @@ function syncCard(id) {
   var ic=inCart(id);
   document.querySelectorAll('.card[data-id="'+id+'"]').forEach(function(card){
     card.classList.toggle('in-cart',ic);
-    var btn=card.querySelector('.atc'); if(btn) btn.textContent=ic?'\u2713':'+';
+    var btn=card.querySelector('.atc');
+    var book=BOOKS.find(function(x){return x.id===id;});
+    if(btn){btn.textContent=ic?'\u2713':'+';btn.setAttribute('aria-pressed',ic?'true':'false');btn.setAttribute('aria-label',(ic?'Remove ':'Add ')+(book?book.name:'book')+(ic?' from cart':' to cart'));}
   });
 }
 function updateCartUI() {
@@ -868,7 +904,7 @@ function renderDrawer() {
   var html='<div style="background:'+nb+';border:1px solid '+(free?'rgba(37,211,102,.3)':'rgba(201,169,110,.25)')+';color:'+nc+';border-radius:8px;padding:8px 12px;margin-bottom:10px;font-size:0.74rem;font-weight:700;">'+nt+'</div>';
   cart.forEach(function(c) {
     var sv=c.rrp-c.price, auth=(c.author&&c.author!=='Unknown')?c.author:'';
-    html+='<div class="ci"><div class="ci-info"><div class="ci-title">'+esc(c.name)+'</div>'+(auth?'<div class="ci-auth">'+esc(auth)+'</div>':'')+'<div class="ci-pp"><span class="ci-rrp">S$'+c.rrp+'</span><span class="ci-price">S$'+c.price+'</span><span class="ci-save">Save S$'+sv+'</span></div></div><button class="ci-rm" onclick="removeFromCart('+c.id+')">&#x2715;</button></div>';
+    html+='<div class="ci"><div class="ci-info"><div class="ci-title">'+esc(c.name)+'</div>'+(auth?'<div class="ci-auth">'+esc(auth)+'</div>':'')+'<div class="ci-pp"><span class="ci-rrp">S$'+c.rrp+'</span><span class="ci-price">S$'+c.price+'</span><span class="ci-save">Save S$'+sv+'</span></div></div><button class="ci-rm" type="button" aria-label="Remove '+esc(c.name)+' from cart" onclick="removeFromCart('+c.id+')">&#x2715;</button></div>';
   });
   items.innerHTML=html;
   var tR=cart.reduce(function(s,c){return s+c.rrp;},0);
@@ -887,11 +923,13 @@ function renderDrawer() {
   lines.push('Grand Total: S$'+grand,'','Please confirm availability. Thank you!');
   document.getElementById('waBtn').href='https://wa.me/'+WA+'?text='+encodeURIComponent(lines.join('\n'));
 }
-function openCart(){document.getElementById('cartOv').classList.add('open');document.getElementById('drawer').classList.add('open');document.body.style.overflow='hidden';renderDrawer();}
-function closeCart(){document.getElementById('cartOv').classList.remove('open');document.getElementById('drawer').classList.remove('open');document.body.style.overflow='';}
+var lastFocus = null;
+function openCart(){lastFocus=document.activeElement;document.getElementById('cartOv').classList.add('open');document.getElementById('drawer').classList.add('open');document.body.style.overflow='hidden';renderDrawer();setTimeout(function(){document.getElementById('drawerClose').focus();},0);}
+function closeCart(){document.getElementById('cartOv').classList.remove('open');document.getElementById('drawer').classList.remove('open');document.body.style.overflow='';if(lastFocus&&document.contains(lastFocus))lastFocus.focus();}
 
 // \u2500\u2500 MODAL \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500
 function openBook(id) {
+  lastFocus=document.activeElement;
   var b=BOOKS.find(function(x){return x.id===id;}); if(!b) return;
   var cls=phClass[b.genre]||'ph-NonFiction', ico=phIcon[b.genre]||'\uD83D\uDCD6';
   var auth=b.author!=='Unknown'?b.author:'', ic=inCart(b.id), sv=b.rrp-b.price;
@@ -900,15 +938,15 @@ function openBook(id) {
     '<div class="mc ph '+cls+'"><img id="mimg" data-id="'+b.id+'" alt="'+esc(b.name)+'"><div class="mph">'+ico+' '+esc(b.name)+'</div></div>'
     +'<div class="md">'
     +'<div class="mg">'+esc(b.genre)+'</div>'
-    +'<div class="mt">'+esc(b.name)+'</div>'
+    +'<div class="mt" id="modalTitle">'+esc(b.name)+'</div>'
     +(auth?'<div class="ma">by '+esc(auth)+'</div>':'')
-    +'<div class="mdesc loading" id="mdesc">\u2726 Generating description\u2026</div>'
+    +'<div class="mdesc" id="mdesc">A pre-loved copy from the M Books collection. Add it to your cart, then confirm availability with us on WhatsApp.</div>'
     +'<div class="m-pp"><span class="m-rrp">RRP S$'+b.rrp+'</span><span class="m-price">S$'+b.price+'</span><span class="m-disc">70% OFF</span></div>'
     +'<div class="m-rrp-src">'+rrpSrc+'</div>'
     +'<div class="m-save">\uD83D\uDCB0 You save S$'+sv+' on this book!</div>'
     +'<div class="m-btns">'
-    +'<button class="m-atc'+(ic?' added':'')+'" id="matcBtn" onclick="modalCart('+b.id+')">'+(ic?'\u2713 In Cart':'+ Add to Cart')+'</button>'
-    +'<a href="'+makeBuyUrl(b)+'" target="_blank" class="m-wa">\uD83D\uDCAC Buy Now</a>'
+    +'<button class="m-atc'+(ic?' added':'')+'" id="matcBtn" type="button" aria-pressed="'+(ic?'true':'false')+'" onclick="modalCart('+b.id+')">'+(ic?'\u2713 In cart':'+ Add to cart')+'</button>'
+    +'<a href="'+makeBuyUrl(b)+'" target="_blank" rel="noopener" class="m-wa">\uD83D\uDCAC Send order request</a>'
     +'</div></div>';
   var mimg=document.getElementById('mimg');
   if(b.cover_url) applyCover(mimg,b.cover_url);
@@ -922,7 +960,7 @@ function openBook(id) {
     var sg='';
     sim.forEach(function(s){
       var sc=phClass[s.genre]||'ph-NonFiction',si=phIcon[s.genre]||'\uD83D\uDCD6';
-      sg+='<div class="sim-card" onclick="openBook('+s.id+')"><div class="sim-cov ph '+sc+'"><img data-simid="'+s.id+'" alt="'+esc(s.name)+'"><div class="sim-ph">'+si+' '+esc(s.name)+'</div></div><div class="sim-body"><div class="sim-ttl">'+esc(s.name)+'</div><div class="sim-price">S$'+s.price+'</div></div></div>';
+      sg+='<button class="sim-card" type="button" onclick="openBook('+s.id+')" aria-label="View details for '+esc(s.name)+'"><div class="sim-cov ph '+sc+'"><img data-simid="'+s.id+'" alt="'+esc(s.name)+'"><div class="sim-ph">'+si+' '+esc(s.name)+'</div></div><div class="sim-body"><div class="sim-ttl">'+esc(s.name)+'</div><div class="sim-price">S$'+s.price+'</div></div></button>';
     });
     document.getElementById('simGrid').innerHTML=sg;
     sim.forEach(function(s){
@@ -932,30 +970,18 @@ function openBook(id) {
   } else { ss.style.display='none'; }
   document.getElementById('ov').classList.add('open');
   document.body.style.overflow='hidden';
-  loadDesc(b);
+  setTimeout(function(){document.getElementById('modalClose').focus();},0);
 }
 function makeBuyUrl(b) {
-  var msg='Hi! I would like to buy "'+b.name+'" by '+b.author+' for S$'+b.price+' (70% off RRP S$'+b.rrp+'). Is it available?';
+  var msg='Hi! I would like to send an order request for "'+b.name+'" by '+b.author+' for S$'+b.price+'. Please confirm availability.';
   return 'https://wa.me/'+WA+'?text='+encodeURIComponent(msg);
 }
 function modalCart(id) {
   addToCart(id);
   var btn=document.getElementById('matcBtn');
-  if(btn){var ic=inCart(id);btn.textContent=ic?'\u2713 In Cart':'+ Add to Cart';btn.classList.toggle('added',ic);}
+  if(btn){var ic=inCart(id);btn.textContent=ic?'\u2713 In cart':'+ Add to cart';btn.classList.toggle('added',ic);btn.setAttribute('aria-pressed',ic?'true':'false');}
 }
-function loadDesc(b) {
-  fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:150,
-      messages:[{role:'user',content:'Write a punchy 2-sentence description for "'+b.name+'" by '+b.author+'. Genre: '+b.genre+'. Start directly, no "this book". Entice a buyer.'}]})
-  }).then(function(r){return r.json();}).then(function(d){
-    var el=document.getElementById('mdesc');
-    if(el){el.classList.remove('loading');el.textContent=(d.content&&d.content[0]&&d.content[0].text)||'A wonderful pre-loved read.';}
-  }).catch(function(){
-    var el=document.getElementById('mdesc');
-    if(el){el.classList.remove('loading');el.textContent='A wonderful pre-loved read available at M Books Singapore.';}
-  });
-}
-function closeMod(){document.getElementById('ov').classList.remove('open');document.body.style.overflow='';}
+function closeMod(){document.getElementById('ov').classList.remove('open');document.body.style.overflow='';if(lastFocus&&document.contains(lastFocus))lastFocus.focus();}
 
 // \u2500\u2500 ADMIN \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500
 function openAdmin(){document.getElementById('adminOv').classList.add('open');document.body.style.overflow='hidden';}
