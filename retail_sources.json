@@ -440,6 +440,20 @@
     "verified_at": "2026-08-20T22:50:27Z"
   },
   {
+    "id": 120,
+    "title": "Diplomacy: A Singapore Experience",
+    "author": "S Jayakumar",
+    "retail_price_sgd": 32.71,
+    "product_url": "https://epigrambookshop.sg/products/diplomacy-a-singapore-experience-2nd-edition",
+    "thumbnail_url": "https://epigrambookshop.sg/cdn/shop/files/Diplomacy_Cover_HR_51x75_crop_center.jpg?v=1707990625",
+    "available": true,
+    "verification": "direct public source-page verification: exact title and author, physical print book, new retail listing, current SGD price",
+    "verified_at": "2026-08-21T05:23:16Z",
+    "source_name": "Epigram Bookshop",
+    "source_type": "public_web_verified",
+    "evidence": "Epigram’s public product page shows “Diplomacy: A Singapore Experience (2nd Edition)” by S. Jayakumar, S$32.71, Cover Type: Paperback, an Add to Cart option, and visible cover images."
+  },
+  {
     "id": 122,
     "title": "Disappointment With God",
     "author": "Philip Yancey",
@@ -515,6 +529,34 @@
     "available": true,
     "verification": "exact title plus author last-name evidence from Kinokuniya product JSON",
     "verified_at": "2026-08-20T22:50:29Z"
+  },
+  {
+    "id": 148,
+    "title": "Factfulness",
+    "author": "Hans Rosling",
+    "retail_price_sgd": 23.95,
+    "product_url": "https://kinokuniya.com.sg/products/9781473637498",
+    "thumbnail_url": "https://kinokuniya.com.sg/cdn/shop/files/9781473637498-1.jpg?v=1786948559&width=200",
+    "available": true,
+    "verification": "direct public source-page verification: exact title and author, physical print book, new retail listing, current SGD price",
+    "verified_at": "2026-08-21T05:23:16Z",
+    "source_name": "Books Kinokuniya Singapore",
+    "source_type": "public_web_verified",
+    "evidence": "Public Kinokuniya page shows Factfulness, Hans Rosling (with Ola Rosling and Anna Rosling Rönnlund), cover image, 23.95 SGD, Available to Order, dispatch timing, and Add to cart for the current retail listing."
+  },
+  {
+    "id": 152,
+    "title": "Fifty secrets of Singapore's success",
+    "author": "Tommy Koh",
+    "retail_price_sgd": 38.15,
+    "product_url": "https://yuyi.com.sg/products/9789814827751",
+    "thumbnail_url": "https://yuyi.com.sg/cdn/shop/products/9789814827751_72c39952-4960-47d7-91d0-29343585f0e2.jpg?v=1596577082&width=1946",
+    "available": true,
+    "verification": "direct public source-page verification: exact title and author, physical print book, new retail listing, current SGD price",
+    "verified_at": "2026-08-21T05:23:16Z",
+    "source_name": "Maha Yu Yi Pte Ltd (Yu Yi Bookstore)",
+    "source_type": "public_web_verified",
+    "evidence": "Yu Yi’s public page lists Fifty Secrets of Singapore’s Success by Tommy Koh, SKU 9789814827751, regular price $38.15 SGD, Add to cart and pickup availability, and visibly displays the book cover."
   },
   {
     "id": 157,
@@ -605,6 +647,20 @@
     "verified_at": "2026-08-20T22:51:02Z"
   },
   {
+    "id": 177,
+    "title": "God In Pursuit: Lessons from the book of Jonah",
+    "author": "Robert M. Solomon",
+    "retail_price_sgd": 19.52,
+    "product_url": "https://mm.cru.org.sg/god-in-pursuit.html",
+    "thumbnail_url": "https://mm.cru.org.sg/media/catalog/product/cache/51499b17a767a00f65e7eba1f28351d4/9/7/9781627078016_1_.jpg",
+    "available": true,
+    "verification": "direct public source-page verification: exact title and author, physical print book, new retail listing, current SGD price",
+    "verified_at": "2026-08-21T05:23:16Z",
+    "source_name": "Cru Media Ministry",
+    "source_type": "public_web_verified",
+    "evidence": "Public CRU page lists “God in Pursuit: Lessons from the Book of Jonah” by Robert M. Solomon, ISBN 9781627078016, Paperback format, current SGD 19.52 price, Add to Cart, and a cover image."
+  },
+  {
     "id": 184,
     "title": "Good economics for hard times",
     "author": "Abhijit V. Banerjee, Esther Duflo",
@@ -625,6 +681,20 @@
     "available": true,
     "verification": "exact title plus author last-name evidence from Kinokuniya product JSON",
     "verified_at": "2026-08-20T22:51:10Z"
+  },
+  {
+    "id": 198,
+    "title": "Headwinds and Hazards: Economic snapshots in an age of populism",
+    "author": "Vikram Khanna",
+    "retail_price_sgd": 30.0,
+    "product_url": "https://www.stbooks.sg/products/headwinds-and-hazards-braving-the-economic-storm-in-an-age-of-populism",
+    "thumbnail_url": "https://www.stbooks.sg/cdn/shop/products/9789814827409_Headwinds_HR.jpg?v=1550217915&width=3840",
+    "available": true,
+    "verification": "direct public source-page verification: exact title and author, physical print book, new retail listing, current SGD price",
+    "verified_at": "2026-08-21T05:23:16Z",
+    "source_name": "Straits Times Press",
+    "source_type": "public_web_verified",
+    "evidence": "Public product page shows Headwinds and Hazards: Economic Snapshots in an Age of Populism by Vikram Khanna, S$30.00, Binding: Limp cover, ISBN 9789814827409, and a visible cover image."
   },
   {
     "id": 201,
@@ -702,6 +772,20 @@
     "available": true,
     "verification": "exact title plus author last-name evidence from Kinokuniya product JSON",
     "verified_at": "2026-08-20T22:51:21Z"
+  },
+  {
+    "id": 218,
+    "title": "How To Win Friends and Influence People",
+    "author": "Dale Carnegie",
+    "retail_price_sgd": 19.95,
+    "product_url": "https://kinokuniya.com.sg/products/9780091906351",
+    "thumbnail_url": "https://kinokuniya.com.sg/cdn/shop/files/9780091906351-1.jpg?v=1787220654&width=200",
+    "available": true,
+    "verification": "direct public source-page verification: exact title and author, physical print book, new retail listing, current SGD price",
+    "verified_at": "2026-08-21T05:23:16Z",
+    "source_name": "Books Kinokuniya Singapore",
+    "source_type": "public_web_verified",
+    "evidence": "Kinokuniya’s public page shows How to Win Friends and Influence People by Dale Carnegie, a cover image, S$19.95, and an available-to-order listing with Add to cart, supporting a current physical retail book."
   },
   {
     "id": 226,
@@ -858,6 +942,20 @@
     "verified_at": "2026-08-20T22:51:36Z"
   },
   {
+    "id": 259,
+    "title": "Lee Kuan Yew: Hard truths to keep Singapore going",
+    "author": "Han Fook Kwang",
+    "retail_price_sgd": 37.29,
+    "product_url": "https://www.stbooks.sg/products/hardcover-hard-truths-to-keep-singapore-going-english",
+    "thumbnail_url": "https://www.stbooks.sg/cdn/shop/products/LKYHardTruthsEngEd-JacketNoDVD2023.jpg?v=1680573731&width=3840",
+    "available": true,
+    "verification": "direct public source-page verification: exact title and author, physical print book, new retail listing, current SGD price",
+    "verified_at": "2026-08-21T05:23:16Z",
+    "source_name": "Straits Times Press, SPH Media Limited",
+    "source_type": "public_web_verified",
+    "evidence": "Public ST Press page lists the exact hardcover title, editors including Han Fook Kwang, S$37.29, ISBN, 458 pages, Add to cart, and a visible cover image."
+  },
+  {
     "id": 261,
     "title": "Let Me Be a Woman",
     "author": "Elisabeth Elliot",
@@ -966,6 +1064,20 @@
     "available": true,
     "verification": "exact title plus author last-name evidence from Kinokuniya product JSON",
     "verified_at": "2026-08-20T22:51:46Z"
+  },
+  {
+    "id": 289,
+    "title": "Million Dollar Mission: Exploring career success with your youth",
+    "author": "Han Kok Kwang",
+    "retail_price_sgd": 23.3,
+    "product_url": "https://candidcreation.com/product/non-fiction/million-dollar-mission-exploring-career-success-youth/",
+    "thumbnail_url": "https://candidcreation.com/wp-content/uploads/2016/11/million-dollar-m-55d595c4d637d.jpg",
+    "available": true,
+    "verification": "direct public source-page verification: exact title and author, physical print book, new retail listing, current SGD price",
+    "verified_at": "2026-08-21T05:23:16Z",
+    "source_name": "Candid Creation Publishing",
+    "source_type": "public_web_verified",
+    "evidence": "Public publisher page shows the exact title, Han Kok Kwang, A5 256-page paperback, current $23.30 SGD retail price, add-to-cart availability, and a visible cover image."
   },
   {
     "id": 292,
@@ -1395,6 +1507,20 @@
     "available": true,
     "verification": "exact title plus author last-name evidence from Kinokuniya product JSON",
     "verified_at": "2026-08-20T22:52:35Z"
+  },
+  {
+    "id": 396,
+    "title": "Stranger to Myself - Diary of a Bangladeshi in Singapore",
+    "author": "MD Sharif Uddin",
+    "retail_price_sgd": 18.6,
+    "product_url": "https://www.landmarkbooks.sg/store/p/stranger-to-myself",
+    "thumbnail_url": "https://images.squarespace-cdn.com/content/v1/5f8fae2d9081cf524da1ebbc/1603353105598-1WJFE26WV2YJFJSURXOL/Stranger+to+Myself.jpg?format=500w",
+    "available": true,
+    "verification": "direct public source-page verification: exact title and author, physical print book, new retail listing, current SGD price",
+    "verified_at": "2026-08-21T05:23:16Z",
+    "source_name": "Landmark Books",
+    "source_type": "public_web_verified",
+    "evidence": "Public Landmark Books page shows the title, MD Sharif Uddin, SGD 18.60, Paperback binding, ISBN, visible cover image, and Add To Cart for a current retail listing."
   },
   {
     "id": 398,
@@ -2068,6 +2194,20 @@
     "verified_at": "2026-08-20T22:53:52Z"
   },
   {
+    "id": 531,
+    "title": "The other 8 hours: Maximise your time to create new wealth and purpose",
+    "author": "Robert Pagliarini",
+    "retail_price_sgd": 73.22,
+    "product_url": "https://kinokuniya.com.sg/products/9780312571351",
+    "thumbnail_url": "https://kinokuniya.com.sg/cdn/shop/files/9780312571351-1.jpg?v=1785761849&width=200",
+    "available": true,
+    "verification": "direct public source-page verification: exact title and author, physical print book, new retail listing, current SGD price",
+    "verified_at": "2026-08-21T05:23:16Z",
+    "source_name": "Books Kinokuniya Singapore",
+    "source_type": "public_web_verified",
+    "evidence": "Public Kinokuniya page shows the exact title “The Other 8 Hours,” author Robert Pagliarini, 73.22 SGD, a visible cover image, and “Available to Order” with Add to cart for a current retail book."
+  },
+  {
     "id": 532,
     "title": "The Other Side of Innovation: Solving the execution challenge",
     "author": "Chris Trimble, Vijay Govindarajan",
@@ -2431,6 +2571,20 @@
     "verified_at": "2026-08-20T22:54:30Z"
   },
   {
+    "id": 609,
+    "title": "Trash Of Society: Setting captives free",
+    "author": "Jason Wong",
+    "retail_price_sgd": 19.62,
+    "product_url": "https://mm.cru.org.sg/trash-of-society.html",
+    "thumbnail_url": "https://mm.cru.org.sg/media/catalog/product/cache/dc399b0060f44d844f4df57142223de3/cart66/9789811141690.jpg",
+    "available": true,
+    "verification": "direct public source-page verification: exact title and author, physical print book, new retail listing, current SGD price",
+    "verified_at": "2026-08-21T05:23:16Z",
+    "source_name": "Cru Media Ministry (Cru Asia)",
+    "source_type": "public_web_verified",
+    "evidence": "Public CRU product page shows “Trash of Society,” subtitle “Setting Captives Free,” author Jason Wong, Paperback format, current SGD 19.62 price, Add to Cart, and a visible cover image."
+  },
+  {
     "id": 610,
     "title": "Treasure Island",
     "author": "Robert Louis Stevenson",
@@ -2706,6 +2860,20 @@
     "verified_at": "2026-08-20T22:55:00Z"
   },
   {
+    "id": 663,
+    "title": "From zero to 1000 - the organisational playbook for startups",
+    "author": "Anne Caron",
+    "retail_price_sgd": 24.9,
+    "product_url": "https://www.annecaronconsulting.com/book",
+    "thumbnail_url": "https://static.wixstatic.com/media/613e4b_93e4e0a83dcf420b84b2d1f3bdcfb054~mv2.png/v1/fill/w_816,h_540,al_c,q_90,usm_0.66_1.00_0.01,enc_avif,quality_auto/mockup-of-a-hard-cover-book-leaning-on-a.png",
+    "available": true,
+    "verification": "direct public source-page verification: exact title and author, physical print book, new retail listing, current SGD price",
+    "verified_at": "2026-08-21T05:23:16Z",
+    "source_name": "Anne Caron Consulting",
+    "source_type": "public_web_verified",
+    "evidence": "Official author page publicly shows “From ZERO to 1,000: The Organisational Playbook for Startups,” “By Anne Caron,” a hard-cover book image, current S$24.90 price, and purchase links."
+  },
+  {
     "id": 664,
     "title": "How To Talk So Little Kids Will Listen",
     "author": "Joanna Faber, Julie King",
@@ -2882,6 +3050,20 @@
     "verified_at": "2026-08-20T22:55:17Z"
   },
   {
+    "id": 690,
+    "title": "7 Virtues for Effective Living: Keys to building a healthy culture",
+    "author": "Benny Ho",
+    "retail_price_sgd": 15.7,
+    "product_url": "https://mm.cru.org.sg/7-virtues-for-effective-living.html",
+    "thumbnail_url": "https://mm.cru.org.sg/media/catalog/product/cache/dc399b0060f44d844f4df57142223de3/9/7/9789810992507_30-11-16.jpg",
+    "available": true,
+    "verification": "direct public source-page verification: exact title and author, physical print book, new retail listing, current SGD price",
+    "verified_at": "2026-08-21T05:23:16Z",
+    "source_name": "Cru Media Ministry",
+    "source_type": "public_web_verified",
+    "evidence": "Public Cru page shows “7 Virtues For Effective Living: Keys To Building A Healthy Culture” by Benny Ho, Paperback ISBN 9789810992507, SGD 15.70, Add to Cart, and a visible cover image."
+  },
+  {
     "id": 693,
     "title": "How To Be Filled With The Holy Spirit",
     "author": "A. W. Tozer",
@@ -2935,6 +3117,20 @@
     "available": true,
     "verification": "exact title plus author last-name evidence from Kinokuniya product JSON",
     "verified_at": "2026-08-20T22:55:26Z"
+  },
+  {
+    "id": 706,
+    "title": "Out of the Harbour: A young person's voyage of faith on the ship doulos",
+    "author": "Jiamin Choo",
+    "retail_price_sgd": 19.9,
+    "product_url": "https://mm.cru.org.sg/out-of-the-harbour-second-edition.html",
+    "thumbnail_url": "https://mm.cru.org.sg/media/catalog/product/cache/e02fef21ca244a18b845a4bf1db22b98/i/m/image0_1.jpg",
+    "available": true,
+    "verification": "direct public source-page verification: exact title and author, physical print book, new retail listing, current SGD price",
+    "verified_at": "2026-08-21T05:23:16Z",
+    "source_name": "Cru Media Ministry",
+    "source_type": "public_web_verified",
+    "evidence": "Public Cru listing shows “Out of the Harbour, Second Edition,” subtitle matching the candidate, author JiaMin Choo, Paperback format, SGD 19.90, Add to Cart, and a visible cover image."
   },
   {
     "id": 709,
@@ -3001,6 +3197,20 @@
     "available": true,
     "verification": "exact title plus author last-name evidence from Kinokuniya product JSON",
     "verified_at": "2026-08-20T22:55:33Z"
+  },
+  {
+    "id": 725,
+    "title": "Faith of our Fathers",
+    "author": "Thong Chan Kei",
+    "retail_price_sgd": 25.9,
+    "product_url": "https://www.faithworks.com.sg/products/9789810563028",
+    "thumbnail_url": "https://www.faithworks.com.sg/cdn/shop/products/3_095629da-93ba-4d17-91ab-c8edaca008fe.png?v=1605854440&width=1946",
+    "available": true,
+    "verification": "direct public source-page verification: exact title and author, physical print book, new retail listing, current SGD price",
+    "verified_at": "2026-08-21T05:23:16Z",
+    "source_name": "Faithworks Bookstore",
+    "source_type": "public_web_verified",
+    "evidence": "Faithworks’ public page shows “Faith Of Our Fathers,” describes Dr Thong Chan-Kei, displays a cover image and Add to cart for a print product, and shows current regular price $25.90 SGD with low stock (2 left)."
   },
   {
     "id": 728,

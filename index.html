@@ -407,7 +407,7 @@ header{background:rgba(255,255,255,.94);border-bottom:1px solid var(--line);box-
       <div class="ap-footer">
         <span class="ap-status" id="apStatus"></span>
         <div style="display:flex;gap:8px;">
-          <button id="fetchSaveBtn" type="button" onclick="showRetailImportNote()" style="padding:9px 16px;background:var(--dtan);color:white;border:none;border-radius:22px;font-family:'Lato',sans-serif;font-weight:700;cursor:pointer;font-size:0.82rem;" title="Current retail references are refreshed through an exact-match Kinokuniya Singapore import">&#x1F50D; Retail sources managed</button>
+          <button id="fetchSaveBtn" type="button" onclick="showRetailImportNote()" style="padding:9px 16px;background:var(--dtan);color:white;border:none;border-radius:22px;font-family:'Lato',sans-serif;font-weight:700;cursor:pointer;font-size:0.82rem;" title="Current retail references are refreshed through exact-match, source-verified Singapore imports">&#x1F50D; Retail sources managed</button>
           <button class="ap-save-btn" id="apSaveBtn" onclick="saveToGitHub()">&#128190; Save to GitHub</button>
         </div>
       </div>
@@ -707,7 +707,8 @@ function isMissing(b) {
   return (b.cover_source === 'none') || (!b.author || b.author === 'Unknown') || (b.notes && b.notes.length > 0);
 }
 function hasVerifiedRetail(b) {
-  return !!(b && b.rrp_source === 'kinokuniya_sg_current_retail' && Number(b.rrp) > Number(b.price));
+  var verifiedSource = b && (b.rrp_source === 'kinokuniya_sg_current_retail' || b.rrp_source === 'public_web_sgd_verified');
+  return !!(verifiedSource && b.rrp_currency === 'SGD' && Number(b.rrp) > Number(b.price));
 }
 function formatPrice(value) {
   var amount = Number(value);
@@ -715,7 +716,7 @@ function formatPrice(value) {
 }
 function showRetailImportNote() {
   var statusEl = document.getElementById('apStatus');
-  if (statusEl) statusEl.textContent = 'Retail references are managed through an exact-match Kinokuniya Singapore import.';
+  if (statusEl) statusEl.textContent = 'Retail references are managed through exact-match, source-verified Singapore imports.';
 }
 
 function makeCard(b) {
@@ -934,10 +935,11 @@ function openBook(id) {
   var auth=b.author!=='Unknown'?b.author:'', ic=inCart(b.id), verifiedRetail=hasVerifiedRetail(b);
   var sv=verifiedRetail?Number(b.rrp)-Number(b.price):0;
   var discount=verifiedRetail?Math.round((1-Number(b.price)/Number(b.rrp))*100):0;
+  var retailSourceName=verifiedRetail?(b.rrp_source_name || (b.rrp_source==='kinokuniya_sg_current_retail'?'Kinokuniya Singapore':'a verified public source')):'';
   var priceLine=verifiedRetail
     ? '<div class="m-pp"><span class="m-rrp">RRP S$'+formatPrice(b.rrp)+'</span><span class="m-price">S$'+formatPrice(b.price)+'</span><span class="m-disc">'+discount+'% OFF</span></div>'
     : '<div class="m-pp"><span class="m-price">S$'+formatPrice(b.price)+'</span></div>';
-  var sourceLine=verifiedRetail?'<div class="m-rrp-src">Current retail price from Kinokuniya Singapore</div>':'<div class="m-rrp-src">Pre-loved price</div>';
+  var sourceLine=verifiedRetail?'<div class="m-rrp-src">Current retail price from '+esc(retailSourceName)+'</div>':'<div class="m-rrp-src">Pre-loved price</div>';
   var saveLine=verifiedRetail?'<div class="m-save">\uD83D\uDCB0 You save S$'+formatPrice(sv)+' on this book!</div>':'';
   document.getElementById('mb').innerHTML =
     '<div class="mc ph '+cls+'"><img id="mimg" data-id="'+b.id+'" alt="'+esc(b.name)+'"><div class="mph">'+ico+' '+esc(b.name)+'</div></div>'
