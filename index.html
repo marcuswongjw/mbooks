@@ -407,7 +407,7 @@ header{background:rgba(255,255,255,.94);border-bottom:1px solid var(--line);box-
       <div class="ap-footer">
         <span class="ap-status" id="apStatus"></span>
         <div style="display:flex;gap:8px;">
-          <button id="fetchSaveBtn" onclick="fetchAndSaveAll()" style="padding:9px 16px;background:var(--dtan);color:white;border:none;border-radius:22px;font-family:'Lato',sans-serif;font-weight:700;cursor:pointer;font-size:0.82rem;" title="Fetch real covers + RRPs from Google Books for all books, then save to GitHub">&#x1F50D; Fetch &amp; Save All</button>
+          <button id="fetchSaveBtn" type="button" onclick="showRetailImportNote()" style="padding:9px 16px;background:var(--dtan);color:white;border:none;border-radius:22px;font-family:'Lato',sans-serif;font-weight:700;cursor:pointer;font-size:0.82rem;" title="Current retail references are refreshed through an exact-match Kinokuniya Singapore import">&#x1F50D; Retail sources managed</button>
           <button class="ap-save-btn" id="apSaveBtn" onclick="saveToGitHub()">&#128190; Save to GitHub</button>
         </div>
       </div>
@@ -456,7 +456,7 @@ header{background:rgba(255,255,255,.94);border-bottom:1px solid var(--line);box-
 var GITHUB_USER = 'marcuswongjw';
 var GITHUB_REPO = 'mbooks';
 var GITHUB_BRANCH = 'main';
-var BOOKS_URL = 'https://raw.githubusercontent.com/marcuswongjw/mbooks/main/books.json';
+var BOOKS_URL = 'books.json';
 var ADMIN_PWD = '8a6368e28715ee67a88abbd5684533e97d3c';
 var WA = '6596304128';
 var PER = 48;
@@ -500,15 +500,19 @@ function init() {
 
 function fetchBooks() {
   // Add cache-buster so GitHub Pages serves fresh data
-  fetch(BOOKS_URL + '?v=' + Date.now())
+  fetch(BOOKS_URL + '?v=' + Date.now(), {cache:'no-store'})
     .then(function(r) { return r.json(); })
     .then(function(data) {
       BOOKS = data;
+      cart = cart.map(function(item) {
+        var book = BOOKS.find(function(candidate) { return candidate.id === item.id; });
+        if (!book) return item;
+        return {id:book.id,name:book.name,author:book.author,price:book.price,rrp:hasVerifiedRetail(book)?book.rrp:null,rrpVerified:hasVerifiedRetail(book)};
+      });
+      saveCart();
       updateCartUI();
       renderStaffPicks();
       apply();
-      // Fetch real RRPs from Google Books in background
-      fetchRRPsBackground();
     })
     .catch(function(e) {
       document.getElementById('grid').innerHTML = '<div class="empty"><h3>Could not load books</h3><p>Please try refreshing the page.</p></div>';
@@ -521,40 +525,7 @@ function loadCover(book, imgEl) {
   var key = book.id;
   if (book.cover_url) { applyCover(imgEl, book.cover_url); return; }
   if (imgCache[key]) { applyCover(imgEl, imgCache[key]); return; }
-  if (imgCache[key] === null) return;
-  // Try Google Books (title + author for better match)
-  var cleanTitle = book.name.split(':')[0].trim().replace(/['"!]/g,'').substring(0,50);
-  var authorLast = (book.author||'').split(',')[0].trim().split(' ').pop();
-  var q = encodeURIComponent('intitle:"' + cleanTitle + '" inauthor:' + authorLast);
-  fetch('https://www.googleapis.com/books/v1/volumes?q=' + q + '&maxResults=1&fields=items(volumeInfo(imageLinks,industryIdentifiers,listPrice),saleInfo(listPrice))', {signal: AbortSignal.timeout(6000)})
-    .then(function(r) { return r.json(); })
-    .then(function(d) {
-      var vi = d.items && d.items[0] && d.items[0].volumeInfo;
-      var si = d.items && d.items[0] && d.items[0].saleInfo;
-      // Cache RRP if found
-      var lp = (si && si.listPrice) || (vi && vi.listPrice);
-      if (lp && lp.amount && book.rrp_source !== 'manual') {
-        var sgd = lp.currencyCode === 'SGD' ? Math.round(lp.amount) : Math.round(lp.amount * 1.35);
-        if (sgd > 4) { book.rrp = sgd; book.price = Math.round(sgd * 0.30); book.rrp_source = 'google_books'; }
-      }
-      // Extract ISBN for OL fallback
-      var isbns = (vi && vi.industryIdentifiers) || [];
-      var isbn = '';
-      isbns.forEach(function(id) { if (id.type === 'ISBN_13' || id.type === 'ISBN_10') isbn = id.identifier; });
-      var links = vi && vi.imageLinks;
-      var src = links && (links.thumbnail || links.smallThumbnail);
-      if (src) {
-        src = src.replace('http://','https://').replace('zoom=1','zoom=3').replace('&edge=curl','');
-        imgCache[key] = src; applyCover(imgEl, src);
-      } else {
-        // Fallback to Open Library (try ISBN first, then title search for cover ID)
-        tryOpenLibraryCover(book, imgEl, isbn, cleanTitle, key, false);
-      }
-    })
-    .catch(function() {
-      var cleanTitle2 = book.name.split(':')[0].trim().replace(/['"!]/g,'').substring(0,50);
-      tryOpenLibraryCover(book, imgEl, '', cleanTitle2, key, false);
-    });
+  imgCache[key] = null;
 }
 
 function applyCover(imgEl, src) {
@@ -735,6 +706,17 @@ function isMissing(b) {
   // OR author is Unknown OR has an admin note flagging it
   return (b.cover_source === 'none') || (!b.author || b.author === 'Unknown') || (b.notes && b.notes.length > 0);
 }
+function hasVerifiedRetail(b) {
+  return !!(b && b.rrp_source === 'kinokuniya_sg_current_retail' && Number(b.rrp) > Number(b.price));
+}
+function formatPrice(value) {
+  var amount = Number(value);
+  return Number.isInteger(amount) ? String(amount) : amount.toFixed(2);
+}
+function showRetailImportNote() {
+  var statusEl = document.getElementById('apStatus');
+  if (statusEl) statusEl.textContent = 'Retail references are managed through an exact-match Kinokuniya Singapore import.';
+}
 
 function makeCard(b) {
   var cls = phClass[b.genre] || 'ph-NonFiction';
@@ -743,6 +725,11 @@ function makeCard(b) {
   var ic = inCart(b.id);
   var miss = isMissing(b);
   var actionLabel = (ic?'Remove ':'Add ') + b.name + (ic?' from cart':' to cart');
+  var verifiedRetail = hasVerifiedRetail(b);
+  var discount = verifiedRetail ? Math.round((1 - Number(b.price) / Number(b.rrp)) * 100) : 0;
+  var priceMarkup = verifiedRetail
+    ? '<span class="rrp-txt">RRP S$' + formatPrice(b.rrp) + '</span><span class="pr">S$' + formatPrice(b.price) + '</span><span class="disc-tag">' + discount + '% OFF</span>'
+    : '<span class="pr">S$' + formatPrice(b.price) + '</span><span class="rrp-txt">Pre-loved price</span>';
   var html = '<article class="card' + (ic?' in-cart':'') + (b.featured?' featured-card':'') + '" data-id="' + b.id + '">'
     + '<button class="card-open" type="button" onclick="openBook(' + b.id + ')" aria-label="View details for ' + esc(b.name) + '">'
     + '<div class="cov">'
@@ -757,7 +744,7 @@ function makeCard(b) {
     + '<div><div class="ct">' + esc(b.name) + '</div>' + (auth?'<div class="ca">'+esc(auth)+'</div>':'') + '</div>'
     + '</button>'
     + '<div class="cf">'
-    + '<div class="prices"><span class="rrp-txt">RRP S$' + b.rrp + '</span><span class="pr">S$' + b.price + '</span><span class="disc-tag">70% OFF</span></div>'
+    + '<div class="prices">' + priceMarkup + '</div>'
     + '<button class="atc" type="button" onclick="addToCart(' + b.id + ')" aria-label="' + esc(actionLabel) + '" aria-pressed="' + (ic?'true':'false') + '">' + (ic?'\u2713':'+') + '</button>'
     + '</div></div></article>';
   return html;
@@ -858,7 +845,7 @@ function addToCart(id) {
   if (inCart(id)) { removeFromCart(id); return; }
   var b = BOOKS.find(function(x){return x.id===id;});
   if (!b||b.sold) return;
-  cart.push({id:b.id,name:b.name,author:b.author,price:b.price,rrp:b.rrp});
+  cart.push({id:b.id,name:b.name,author:b.author,price:b.price,rrp:hasVerifiedRetail(b)?b.rrp:null,rrpVerified:hasVerifiedRetail(b)});
   saveCart(); updateCartUI(); syncCard(id);
 }
 function removeFromCart(id) {
@@ -903,24 +890,36 @@ function renderDrawer() {
   var nt=free?'\uD83D\uDE9A Free delivery unlocked! ('+cart.length+' books)':'Add '+need+' more book'+(need!==1?'s':'')+' for free delivery \uD83D\uDE9A';
   var html='<div style="background:'+nb+';border:1px solid '+(free?'rgba(37,211,102,.3)':'rgba(201,169,110,.25)')+';color:'+nc+';border-radius:8px;padding:8px 12px;margin-bottom:10px;font-size:0.74rem;font-weight:700;">'+nt+'</div>';
   cart.forEach(function(c) {
-    var sv=c.rrp-c.price, auth=(c.author&&c.author!=='Unknown')?c.author:'';
-    html+='<div class="ci"><div class="ci-info"><div class="ci-title">'+esc(c.name)+'</div>'+(auth?'<div class="ci-auth">'+esc(auth)+'</div>':'')+'<div class="ci-pp"><span class="ci-rrp">S$'+c.rrp+'</span><span class="ci-price">S$'+c.price+'</span><span class="ci-save">Save S$'+sv+'</span></div></div><button class="ci-rm" type="button" aria-label="Remove '+esc(c.name)+' from cart" onclick="removeFromCart('+c.id+')">&#x2715;</button></div>';
+    var verifiedRetail=!!(c.rrpVerified && Number(c.rrp)>Number(c.price));
+    var auth=(c.author&&c.author!=='Unknown')?c.author:'';
+    var itemPrice=verifiedRetail
+      ? '<span class="ci-rrp">RRP S$'+formatPrice(c.rrp)+'</span><span class="ci-price">S$'+formatPrice(c.price)+'</span><span class="ci-save">Save S$'+formatPrice(Number(c.rrp)-Number(c.price))+'</span>'
+      : '<span class="ci-price">S$'+formatPrice(c.price)+'</span><span class="ci-save">Pre-loved price</span>';
+    html+='<div class="ci"><div class="ci-info"><div class="ci-title">'+esc(c.name)+'</div>'+(auth?'<div class="ci-auth">'+esc(auth)+'</div>':'')+'<div class="ci-pp">'+itemPrice+'</div></div><button class="ci-rm" type="button" aria-label="Remove '+esc(c.name)+' from cart" onclick="removeFromCart('+c.id+')">&#x2715;</button></div>';
   });
   items.innerHTML=html;
-  var tR=cart.reduce(function(s,c){return s+c.rrp;},0);
-  var tP=cart.reduce(function(s,c){return s+c.price;},0);
-  var tS=tR-tP, del=free?0:DELIVERY, grand=tP+del;
-  document.getElementById('tRrp').textContent='S$'+tR;
-  document.getElementById('tPrice').textContent='S$'+grand;
-  document.getElementById('tSaved').textContent='\uD83C\uDF89 You saved S$'+tS+' (70% off RRP)';
+  var allVerified=cart.every(function(c){return c.rrpVerified && Number(c.rrp)>Number(c.price);});
+  var tP=cart.reduce(function(s,c){return s+Number(c.price);},0);
+  var del=free?0:DELIVERY, grand=tP+del;
+  var rrpRow=document.getElementById('tRrp').parentElement;
+  var savedRow=document.getElementById('tSaved').parentElement;
+  rrpRow.style.display=allVerified?'flex':'none';
+  savedRow.style.display=allVerified?'flex':'none';
+  if (allVerified) {
+    var tR=cart.reduce(function(s,c){return s+Number(c.rrp);},0);
+    var tS=tR-tP;
+    document.getElementById('tRrp').textContent='S$'+formatPrice(tR);
+    document.getElementById('tSaved').textContent='\uD83C\uDF89 You saved S$'+formatPrice(tS)+' against verified RRP';
+  }
+  document.getElementById('tPrice').textContent='S$'+formatPrice(grand);
   var di=document.getElementById('delivInfo');
   if(free){di.textContent='\uD83D\uDE9A Free delivery included!';di.className='deliv-info free';}
   else{di.textContent='+ S$'+DELIVERY+' delivery \u00B7 or free self-collect (Tampines / Paya Lebar)';di.className='deliv-info';}
   var lines=['Hi Marcus! I would like to order these pre-loved books from M Books:',''];
-  cart.forEach(function(c,i){lines.push((i+1)+'. '+c.name+' by '+c.author+' - S$'+c.price);});
-  lines.push('','Subtotal: S$'+tP+' ('+cart.length+' book'+(cart.length!==1?'s':'')+')');
+  cart.forEach(function(c,i){lines.push((i+1)+'. '+c.name+' by '+c.author+' - S$'+formatPrice(c.price));});
+  lines.push('','Subtotal: S$'+formatPrice(tP)+' ('+cart.length+' book'+(cart.length!==1?'s':'')+')');
   lines.push(free?'Delivery: Free!':'Delivery: S$'+DELIVERY);
-  lines.push('Grand Total: S$'+grand,'','Please confirm availability. Thank you!');
+  lines.push('Grand Total: S$'+formatPrice(grand),'','Please confirm availability. Thank you!');
   document.getElementById('waBtn').href='https://wa.me/'+WA+'?text='+encodeURIComponent(lines.join('\n'));
 }
 var lastFocus = null;
@@ -932,8 +931,14 @@ function openBook(id) {
   lastFocus=document.activeElement;
   var b=BOOKS.find(function(x){return x.id===id;}); if(!b) return;
   var cls=phClass[b.genre]||'ph-NonFiction', ico=phIcon[b.genre]||'\uD83D\uDCD6';
-  var auth=b.author!=='Unknown'?b.author:'', ic=inCart(b.id), sv=b.rrp-b.price;
-  var rrpSrc = b.rrp_source==='google_books'?'(verified RRP)':b.rrp_source==='manual'?'(manual RRP)':'(estimated RRP)';
+  var auth=b.author!=='Unknown'?b.author:'', ic=inCart(b.id), verifiedRetail=hasVerifiedRetail(b);
+  var sv=verifiedRetail?Number(b.rrp)-Number(b.price):0;
+  var discount=verifiedRetail?Math.round((1-Number(b.price)/Number(b.rrp))*100):0;
+  var priceLine=verifiedRetail
+    ? '<div class="m-pp"><span class="m-rrp">RRP S$'+formatPrice(b.rrp)+'</span><span class="m-price">S$'+formatPrice(b.price)+'</span><span class="m-disc">'+discount+'% OFF</span></div>'
+    : '<div class="m-pp"><span class="m-price">S$'+formatPrice(b.price)+'</span></div>';
+  var sourceLine=verifiedRetail?'<div class="m-rrp-src">Current retail price from Kinokuniya Singapore</div>':'<div class="m-rrp-src">Pre-loved price</div>';
+  var saveLine=verifiedRetail?'<div class="m-save">\uD83D\uDCB0 You save S$'+formatPrice(sv)+' on this book!</div>':'';
   document.getElementById('mb').innerHTML =
     '<div class="mc ph '+cls+'"><img id="mimg" data-id="'+b.id+'" alt="'+esc(b.name)+'"><div class="mph">'+ico+' '+esc(b.name)+'</div></div>'
     +'<div class="md">'
@@ -941,9 +946,9 @@ function openBook(id) {
     +'<div class="mt" id="modalTitle">'+esc(b.name)+'</div>'
     +(auth?'<div class="ma">by '+esc(auth)+'</div>':'')
     +'<div class="mdesc" id="mdesc">A pre-loved copy from the M Books collection. Add it to your cart, then confirm availability with us on WhatsApp.</div>'
-    +'<div class="m-pp"><span class="m-rrp">RRP S$'+b.rrp+'</span><span class="m-price">S$'+b.price+'</span><span class="m-disc">70% OFF</span></div>'
-    +'<div class="m-rrp-src">'+rrpSrc+'</div>'
-    +'<div class="m-save">\uD83D\uDCB0 You save S$'+sv+' on this book!</div>'
+    +priceLine
+    +sourceLine
+    +saveLine
     +'<div class="m-btns">'
     +'<button class="m-atc'+(ic?' added':'')+'" id="matcBtn" type="button" aria-pressed="'+(ic?'true':'false')+'" onclick="modalCart('+b.id+')">'+(ic?'\u2713 In cart':'+ Add to cart')+'</button>'
     +'<a href="'+makeBuyUrl(b)+'" target="_blank" rel="noopener" class="m-wa">\uD83D\uDCAC Send order request</a>'
@@ -1035,7 +1040,7 @@ function getAdminList() {
   return BOOKS.filter(function(b) {
     var matchQ=!q||b.name.toLowerCase().indexOf(q)>-1||b.author.toLowerCase().indexOf(q)>-1;
     if (!matchQ) return false;
-    if (adminTab==='missing') return isMissing(b)||b.rrp_source==='genre_estimate';
+    if (adminTab==='missing') return isMissing(b)||!hasVerifiedRetail(b);
     if (adminTab==='featured') return b.featured;
     if (adminTab==='sold') return b.sold;
     return true;
@@ -1044,7 +1049,7 @@ function getAdminList() {
 
 function renderAdminRows() {
   var list=getAdminList();
-  var missing=BOOKS.filter(function(b){return isMissing(b)||b.rrp_source==='genre_estimate';}).length;
+  var missing=BOOKS.filter(function(b){return isMissing(b)||!hasVerifiedRetail(b);}).length;
   var sold=BOOKS.filter(function(b){return b.sold;}).length;
   var feat=BOOKS.filter(function(b){return b.featured;}).length;
   document.getElementById('apStatus').textContent=sold+' sold \u00B7 '+feat+' featured \u00B7 '+missing+' need attention';
@@ -1052,13 +1057,14 @@ function renderAdminRows() {
   document.getElementById('apRows').innerHTML=list.map(function(b){
     var flags=[];
     if(isMissing(b)) flags.push('No cover');
-    if(b.rrp_source==='genre_estimate') flags.push('Est. RRP');
+    if(!hasVerifiedRetail(b)) flags.push('Retail ref. unverified');
     if(b.notes) flags.push('Note: '+b.notes.substring(0,20));
     var rowCls='ap-row'+(isMissing(b)?' missing':'')+(b.notes?' flagged':'');
+    var retailLabel=hasVerifiedRetail(b)?'RRP S$'+formatPrice(b.rrp)+' \u2713':'Retail reference unavailable';
     return '<div class="'+rowCls+'">'
       +'<div class="ap-info">'
       +'<div class="ap-title">'+esc(b.name)+'</div>'
-      +'<div class="ap-sub">'+esc(b.author)+' \u00B7 RRP S$'+b.rrp+(b.rrp_source==='google_books'?' \u2713':'')+'</div>'
+      +'<div class="ap-sub">'+esc(b.author)+' \u00B7 '+retailLabel+'</div>'
       +(flags.length?'<div class="ap-flags">'+flags.map(function(f){return '<span class="ap-flag">'+f+'</span>';}).join('')+'</div>':'')
       +'</div>'
       +'<div class="ap-controls">'
