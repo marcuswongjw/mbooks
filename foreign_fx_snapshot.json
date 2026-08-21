@@ -1,0 +1,16 @@
+{
+  "provider": "https://www.exchangerate-api.com",
+  "source_url": "https://open.er-api.com/v6/latest/SGD",
+  "provider_update_utc": "Fri, 21 Aug 2026 00:02:31 +0000",
+  "retrieved_at": "2026-08-21T05:55:16Z",
+  "base_currency": "SGD",
+  "rates_source_currency_per_sgd": {
+    "USD": 0.786257,
+    "GBP": 0.576644
+  },
+  "conversion_method": "converted_sgd = foreign_price / source_currency_per_sgd",
+  "record_ids": [
+    24,
+    325
+  ]
+}

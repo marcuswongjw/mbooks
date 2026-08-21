@@ -407,7 +407,7 @@ header{background:rgba(255,255,255,.94);border-bottom:1px solid var(--line);box-
       <div class="ap-footer">
         <span class="ap-status" id="apStatus"></span>
         <div style="display:flex;gap:8px;">
-          <button id="fetchSaveBtn" type="button" onclick="showRetailImportNote()" style="padding:9px 16px;background:var(--dtan);color:white;border:none;border-radius:22px;font-family:'Lato',sans-serif;font-weight:700;cursor:pointer;font-size:0.82rem;" title="Current retail references are refreshed through exact-match, source-verified Singapore imports">&#x1F50D; Retail sources managed</button>
+          <button id="fetchSaveBtn" type="button" onclick="showRetailImportNote()" style="padding:9px 16px;background:var(--dtan);color:white;border:none;border-radius:22px;font-family:'Lato',sans-serif;font-weight:700;cursor:pointer;font-size:0.82rem;" title="Current retail references use exact-match Singapore sources and documented foreign-price conversions">&#x1F50D; Retail sources managed</button>
           <button class="ap-save-btn" id="apSaveBtn" onclick="saveToGitHub()">&#128190; Save to GitHub</button>
         </div>
       </div>
@@ -707,7 +707,7 @@ function isMissing(b) {
   return (b.cover_source === 'none') || (!b.author || b.author === 'Unknown') || (b.notes && b.notes.length > 0);
 }
 function hasVerifiedRetail(b) {
-  var verifiedSource = b && (b.rrp_source === 'kinokuniya_sg_current_retail' || b.rrp_source === 'public_web_sgd_verified');
+  var verifiedSource = b && (b.rrp_source === 'kinokuniya_sg_current_retail' || b.rrp_source === 'public_web_sgd_verified' || b.rrp_source === 'foreign_currency_converted_verified');
   return !!(verifiedSource && b.rrp_currency === 'SGD' && Number(b.rrp) > Number(b.price));
 }
 function formatPrice(value) {
@@ -716,7 +716,7 @@ function formatPrice(value) {
 }
 function showRetailImportNote() {
   var statusEl = document.getElementById('apStatus');
-  if (statusEl) statusEl.textContent = 'Retail references are managed through exact-match, source-verified Singapore imports.';
+  if (statusEl) statusEl.textContent = 'Retail references are managed through exact-match Singapore imports and documented foreign-price conversions.';
 }
 
 function makeCard(b) {
@@ -727,9 +727,11 @@ function makeCard(b) {
   var miss = isMissing(b);
   var actionLabel = (ic?'Remove ':'Add ') + b.name + (ic?' from cart':' to cart');
   var verifiedRetail = hasVerifiedRetail(b);
+  var foreignConverted = verifiedRetail && b.rrp_source === 'foreign_currency_converted_verified';
+  var referenceLabel = foreignConverted ? 'Ref. S$' : 'RRP S$';
   var discount = verifiedRetail ? Math.round((1 - Number(b.price) / Number(b.rrp)) * 100) : 0;
   var priceMarkup = verifiedRetail
-    ? '<span class="rrp-txt">RRP S$' + formatPrice(b.rrp) + '</span><span class="pr">S$' + formatPrice(b.price) + '</span><span class="disc-tag">' + discount + '% OFF</span>'
+    ? '<span class="rrp-txt">' + referenceLabel + formatPrice(b.rrp) + '</span><span class="pr">S$' + formatPrice(b.price) + '</span><span class="disc-tag">' + discount + '% OFF</span>'
     : '<span class="pr">S$' + formatPrice(b.price) + '</span><span class="rrp-txt">Pre-loved price</span>';
   var html = '<article class="card' + (ic?' in-cart':'') + (b.featured?' featured-card':'') + '" data-id="' + b.id + '">'
     + '<button class="card-open" type="button" onclick="openBook(' + b.id + ')" aria-label="View details for ' + esc(b.name) + '">'
@@ -846,7 +848,7 @@ function addToCart(id) {
   if (inCart(id)) { removeFromCart(id); return; }
   var b = BOOKS.find(function(x){return x.id===id;});
   if (!b||b.sold) return;
-  cart.push({id:b.id,name:b.name,author:b.author,price:b.price,rrp:hasVerifiedRetail(b)?b.rrp:null,rrpVerified:hasVerifiedRetail(b)});
+  cart.push({id:b.id,name:b.name,author:b.author,price:b.price,rrp:hasVerifiedRetail(b)?b.rrp:null,rrpVerified:hasVerifiedRetail(b),foreignConverted:b.rrp_source==='foreign_currency_converted_verified',referenceLabel:b.rrp_source==='foreign_currency_converted_verified'?'Ref.':'RRP'});
   saveCart(); updateCartUI(); syncCard(id);
 }
 function removeFromCart(id) {
@@ -893,8 +895,9 @@ function renderDrawer() {
   cart.forEach(function(c) {
     var verifiedRetail=!!(c.rrpVerified && Number(c.rrp)>Number(c.price));
     var auth=(c.author&&c.author!=='Unknown')?c.author:'';
+    var referenceLabel=c.referenceLabel || 'RRP';
     var itemPrice=verifiedRetail
-      ? '<span class="ci-rrp">RRP S$'+formatPrice(c.rrp)+'</span><span class="ci-price">S$'+formatPrice(c.price)+'</span><span class="ci-save">Save S$'+formatPrice(Number(c.rrp)-Number(c.price))+'</span>'
+      ? '<span class="ci-rrp">'+referenceLabel+' S$'+formatPrice(c.rrp)+'</span><span class="ci-price">S$'+formatPrice(c.price)+'</span><span class="ci-save">Save S$'+formatPrice(Number(c.rrp)-Number(c.price))+'</span>'
       : '<span class="ci-price">S$'+formatPrice(c.price)+'</span><span class="ci-save">Pre-loved price</span>';
     html+='<div class="ci"><div class="ci-info"><div class="ci-title">'+esc(c.name)+'</div>'+(auth?'<div class="ci-auth">'+esc(auth)+'</div>':'')+'<div class="ci-pp">'+itemPrice+'</div></div><button class="ci-rm" type="button" aria-label="Remove '+esc(c.name)+' from cart" onclick="removeFromCart('+c.id+')">&#x2715;</button></div>';
   });
@@ -909,8 +912,9 @@ function renderDrawer() {
   if (allVerified) {
     var tR=cart.reduce(function(s,c){return s+Number(c.rrp);},0);
     var tS=tR-tP;
+    var includesForeignReference=cart.some(function(c){return c.foreignConverted;});
     document.getElementById('tRrp').textContent='S$'+formatPrice(tR);
-    document.getElementById('tSaved').textContent='\uD83C\uDF89 You saved S$'+formatPrice(tS)+' against verified RRP';
+    document.getElementById('tSaved').textContent='\uD83C\uDF89 You saved S$'+formatPrice(tS)+' against verified '+(includesForeignReference?'reference prices':'RRP');
   }
   document.getElementById('tPrice').textContent='S$'+formatPrice(grand);
   var di=document.getElementById('delivInfo');
@@ -936,10 +940,12 @@ function openBook(id) {
   var sv=verifiedRetail?Number(b.rrp)-Number(b.price):0;
   var discount=verifiedRetail?Math.round((1-Number(b.price)/Number(b.rrp))*100):0;
   var retailSourceName=verifiedRetail?(b.rrp_source_name || (b.rrp_source==='kinokuniya_sg_current_retail'?'Kinokuniya Singapore':'a verified public source')):'';
+  var foreignConverted=verifiedRetail && b.rrp_source==='foreign_currency_converted_verified';
+  var referenceLabel=foreignConverted?'Converted ref. S$':'RRP S$';
   var priceLine=verifiedRetail
-    ? '<div class="m-pp"><span class="m-rrp">RRP S$'+formatPrice(b.rrp)+'</span><span class="m-price">S$'+formatPrice(b.price)+'</span><span class="m-disc">'+discount+'% OFF</span></div>'
+    ? '<div class="m-pp"><span class="m-rrp">'+referenceLabel+formatPrice(b.rrp)+'</span><span class="m-price">S$'+formatPrice(b.price)+'</span><span class="m-disc">'+discount+'% OFF</span></div>'
     : '<div class="m-pp"><span class="m-price">S$'+formatPrice(b.price)+'</span></div>';
-  var sourceLine=verifiedRetail?'<div class="m-rrp-src">Current retail price from '+esc(retailSourceName)+'</div>':'<div class="m-rrp-src">Pre-loved price</div>';
+  var sourceLine=verifiedRetail?'<div class="m-rrp-src">'+(foreignConverted?'Converted from '+esc(b.rrp_original_currency)+' '+formatPrice(b.rrp_original_price)+' retail price at '+esc(retailSourceName):'Current retail price from '+esc(retailSourceName))+'</div>':'<div class="m-rrp-src">Pre-loved price</div>';
   var saveLine=verifiedRetail?'<div class="m-save">\uD83D\uDCB0 You save S$'+formatPrice(sv)+' on this book!</div>':'';
   document.getElementById('mb').innerHTML =
     '<div class="mc ph '+cls+'"><img id="mimg" data-id="'+b.id+'" alt="'+esc(b.name)+'"><div class="mph">'+ico+' '+esc(b.name)+'</div></div>'
@@ -1062,7 +1068,7 @@ function renderAdminRows() {
     if(!hasVerifiedRetail(b)) flags.push('Retail ref. unverified');
     if(b.notes) flags.push('Note: '+b.notes.substring(0,20));
     var rowCls='ap-row'+(isMissing(b)?' missing':'')+(b.notes?' flagged':'');
-    var retailLabel=hasVerifiedRetail(b)?'RRP S$'+formatPrice(b.rrp)+' \u2713':'Retail reference unavailable';
+    var retailLabel=hasVerifiedRetail(b)?(b.rrp_source==='foreign_currency_converted_verified'?'Ref. S$':'RRP S$')+formatPrice(b.rrp)+' \u2713':'Retail reference unavailable';
     return '<div class="'+rowCls+'">'
       +'<div class="ap-info">'
       +'<div class="ap-title">'+esc(b.name)+'</div>'

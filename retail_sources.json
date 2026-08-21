@@ -77,6 +77,25 @@
     "verified_at": "2026-08-20T22:50:14Z"
   },
   {
+    "id": 24,
+    "title": "A Portrait of my father",
+    "author": "George W. Bush",
+    "retail_price_sgd": 35.61,
+    "product_url": "https://shop.bushcenter.org/products/41-a-portrait-of-my-father-hardcover",
+    "thumbnail_url": "https://shop.bushcenter.org/cdn/shop/products/9780553447781.jpg?v=1770415317",
+    "available": true,
+    "verification": "direct public source-page verification: exact title and author, physical print book, new retail listing, foreign-currency price converted to SGD using documented FX snapshot",
+    "verified_at": "2026-08-21T05:55:16Z",
+    "source_name": "George W. Bush Presidential Center Museum Store",
+    "source_type": "public_web_verified_foreign_currency",
+    "source_price": 28.0,
+    "source_currency": "USD",
+    "fx_rate_source_per_sgd": 0.786257,
+    "fx_source_url": "https://open.er-api.com/v6/latest/SGD",
+    "fx_provider_update_utc": "Fri, 21 Aug 2026 00:02:31 +0000",
+    "evidence": "Official Bush Center Museum Store listing matches 41: A Portrait of My Father by George W. Bush, shows an available unsigned hardcover at $28.00 USD, and visibly associates the cover image with the listing."
+  },
+  {
     "id": 25,
     "title": "A Promised Land",
     "author": "Barack Obama",
@@ -1243,6 +1262,25 @@
     "available": true,
     "verification": "exact title plus author last-name evidence from Kinokuniya product JSON",
     "verified_at": "2026-08-20T22:52:04Z"
+  },
+  {
+    "id": 325,
+    "title": "Plato At The Googleplex: Why philosophy won't go away",
+    "author": "Rebecca Newberger Goldstein",
+    "retail_price_sgd": 29.46,
+    "product_url": "https://www.waterstones.com/book/plato-at-the-googleplex/rebecca-newberger-goldstein/9781782395591",
+    "thumbnail_url": "https://cdn.waterstones.com/bookjackets/large/9781/7823/9781782395591.jpg",
+    "available": true,
+    "verification": "direct public source-page verification: exact title and author, physical print book, new retail listing, foreign-currency price converted to SGD using documented FX snapshot",
+    "verified_at": "2026-08-21T05:55:16Z",
+    "source_name": "Waterstones",
+    "source_type": "public_web_verified_foreign_currency",
+    "source_price": 16.99,
+    "source_currency": "GBP",
+    "fx_rate_source_per_sgd": 0.576644,
+    "fx_source_url": "https://open.er-api.com/v6/latest/SGD",
+    "fx_provider_update_utc": "Fri, 21 Aug 2026 00:02:31 +0000",
+    "evidence": "Waterstones lists the exact title and Rebecca Newberger Goldstein as a paperback, £16.99 GBP, shown in stock; the page visibly associates the cover image with this matched edition."
   },
   {
     "id": 328,
