@@ -170,3 +170,37 @@ test('proxy returns 502 when GitHub Pages origin fetch fails', async () => {
   assert.equal(res.status, 502);
   assert.match(await res.text(), /temporarily unavailable/);
 });
+
+test('catalog falls back to Git Blobs API when file exceeds 1 MB Contents limit', async () => {
+  const prevFetch = globalThis.fetch;
+  globalThis.fetch = async (url, init = {}) => {
+    const u = String(url);
+    if (u.includes('/contents/books.json')) {
+      return new Response(JSON.stringify({ sha: 'sha-large-1', size: 1500000 }), {
+        status: 200,
+        headers: { 'content-type': 'application/json' },
+      });
+    }
+    if (u.includes('/git/blobs/sha-large-1')) {
+      return new Response(JSON.stringify({
+        sha: 'sha-large-1',
+        content: Buffer.from(JSON.stringify(sampleBooks, null, 2), 'utf8').toString('base64'),
+        encoding: 'base64',
+      }), {
+        status: 200,
+        headers: { 'content-type': 'application/json' },
+      });
+    }
+    return prevFetch(url, init);
+  };
+
+  const session = await login();
+  const cookie = cookieFrom(session);
+  const res = await request('/api/admin/catalog', {
+    headers: { cookie },
+  });
+  assert.equal(res.status, 200);
+  const body = await res.json();
+  assert.equal(body.sha, 'sha-large-1');
+  assert.equal(body.books[0].name, 'Test Book');
+});

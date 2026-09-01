@@ -128,9 +128,20 @@ async function readGithubCatalog(env) {
   const res = await fetch(githubContentsUrl(env), { headers: githubHeaders(env) });
   if (!res.ok) return { ok: false };
   const data = await res.json();
-  if (!data.sha || !data.content) return { ok: false };
+  if (!data.sha) return { ok: false };
+
+  let rawContent = data.content;
+  // If file exceeds 1 MB, GitHub Contents API omits content. Fall back to Git Blobs API (up to 100 MB).
+  if (!rawContent) {
+    const blobRes = await fetch(githubBlobUrl(env, data.sha), { headers: githubHeaders(env) });
+    if (!blobRes.ok) return { ok: false };
+    const blobData = await blobRes.json();
+    rawContent = blobData.content;
+  }
+  if (!rawContent) return { ok: false };
+
   try {
-    const books = JSON.parse(b64ToUtf8(data.content));
+    const books = JSON.parse(b64ToUtf8(rawContent));
     if (!Array.isArray(books)) return { ok: false };
     return { ok: true, sha: data.sha, books };
   } catch {
@@ -143,6 +154,12 @@ function githubContentsUrl(env) {
   const repo = env.GITHUB_REPO || "mbooks";
   const branch = env.GITHUB_BRANCH || "main";
   return `https://api.github.com/repos/${owner}/${repo}/contents/books.json?ref=${encodeURIComponent(branch)}`;
+}
+
+function githubBlobUrl(env, sha) {
+  const owner = env.GITHUB_OWNER || "marcuswongjw";
+  const repo = env.GITHUB_REPO || "mbooks";
+  return `https://api.github.com/repos/${owner}/${repo}/git/blobs/${encodeURIComponent(sha)}`;
 }
 
 function githubHeaders(env) {
