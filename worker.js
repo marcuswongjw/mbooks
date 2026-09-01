@@ -21,10 +21,26 @@ export default {
 
     const originPath = path === "/" ? "/index.html" : path;
     const target = new URL("/mbooks" + originPath + incoming.search, ORIGIN);
-    return fetch(target, {
-      method: request.method,
-      redirect: "follow",
-    });
+    try {
+      const originRes = await fetch(target, {
+        method: request.method,
+        redirect: "follow",
+      });
+      const headers = new Headers(originRes.headers);
+      if (path === "/" || originPath.endsWith(".html")) {
+        headers.set("Cache-Control", "no-cache, must-revalidate");
+      }
+      return new Response(originRes.body, {
+        status: originRes.status,
+        statusText: originRes.statusText,
+        headers,
+      });
+    } catch {
+      return new Response("M Books is temporarily unavailable. Please try again shortly.", {
+        status: 502,
+        headers: { "Content-Type": "text/plain; charset=utf-8" },
+      });
+    }
   },
 };
 

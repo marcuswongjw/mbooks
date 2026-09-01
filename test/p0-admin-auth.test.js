@@ -151,3 +151,22 @@ test('non-API routes still proxy to GitHub Pages', async () => {
   assert.equal(await res.text(), 'proxied-origin');
   assert.equal(fetchCalls[0].url, 'https://marcuswongjw.github.io/mbooks/books.json');
 });
+
+test('HTML routes set no-cache to avoid stale deploys', async () => {
+  const rootRes = await request('/');
+  assert.equal(rootRes.status, 200);
+  assert.equal(rootRes.headers.get('cache-control'), 'no-cache, must-revalidate');
+
+  const htmlRes = await request('/index.html');
+  assert.equal(htmlRes.status, 200);
+  assert.equal(htmlRes.headers.get('cache-control'), 'no-cache, must-revalidate');
+});
+
+test('proxy returns 502 when GitHub Pages origin fetch fails', async () => {
+  globalThis.fetch = async () => {
+    throw new Error('Connection refused');
+  };
+  const res = await request('/');
+  assert.equal(res.status, 502);
+  assert.match(await res.text(), /temporarily unavailable/);
+});
