@@ -148,3 +148,19 @@ test('admin attention logic captures notes and unverified retail without marking
   const flaggedBook = { ...normalBook, notes: 'Inspect spine' };
   assert.equal(fn(flaggedBook), true);
 });
+
+// ── Issue 11 Tests ───────────────────────────────────────────────────────────
+
+test('curated intake includes copy to clipboard fallback and re-open options', () => {
+  assert.match(html, /id="copyCuratedBtn"/);
+  assert.match(html, /id="retryCuratedWhatsApp"/);
+  assert.match(html, /onclick="editCuratedAgain\(\)"/);
+  assert.match(html, /function\s+copyCuratedText\s*\(/);
+  assert.match(html, /function\s+editCuratedAgain\s*\(/);
+});
+
+test('buildCuratedReview saves curatedMessageText for clipboard copying and links retry button', () => {
+  const fn = extractFunction('buildCuratedReview');
+  assert.match(fn, /curatedMessageText\s*=\s*lines\.join\('\\n'\)/);
+  assert.match(fn, /retryCuratedWhatsApp/);
+});

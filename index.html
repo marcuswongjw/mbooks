@@ -460,7 +460,18 @@ header{background:rgba(255,255,255,.94);border-bottom:1px solid var(--line);box-
         <div class="step-actions"><button class="form-btn" type="button" onclick="previousCuratedStep()">Edit answers</button><div class="step-actions-right"><a class="form-btn whatsapp" id="curatedWhatsApp" href="#" target="_blank" rel="noopener" onclick="showCuratedSent()">Send request on WhatsApp</a></div></div>
       </section>
     </form>
-    <div class="curated-success" id="curatedSuccess"><div aria-hidden="true" style="font-size:2rem">✓</div><h3>Your request is ready</h3><p>WhatsApp should have opened with all your answers. Send the message there and Marcus will reply personally.</p><button class="form-btn primary" type="button" style="margin-top:20px" onclick="closeCurated()">Done</button></div>
+    <div class="curated-success" id="curatedSuccess">
+      <div aria-hidden="true" style="font-size:2rem">✓</div>
+      <h3>WhatsApp request opened</h3>
+      <p>If WhatsApp did not launch or you prefer sending manually, copy your request text below or try reopening WhatsApp.</p>
+      <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:16px;">
+        <button class="form-btn primary" type="button" id="copyCuratedBtn" onclick="copyCuratedText()">📋 Copy request text</button>
+        <a class="form-btn whatsapp" id="retryCuratedWhatsApp" href="#" target="_blank" rel="noopener">💬 Re-open WhatsApp</a>
+        <button class="form-btn" type="button" onclick="editCuratedAgain()">Edit answers</button>
+      </div>
+      <div id="copySuccessMsg" style="font-size:0.75rem;color:var(--green);font-weight:700;margin-top:10px;display:none;">✓ Copied to clipboard!</div>
+      <div style="margin-top:24px;"><button class="form-btn" type="button" style="border:none;background:transparent;color:var(--dtan);text-decoration:underline;cursor:pointer;" onclick="closeCurated()">Done and close</button></div>
+    </div>
   </div>
 </div>
 
@@ -1071,6 +1082,8 @@ function getCuratedDetails() {
   return {service:curatedService==='mystery'?'Mystery book package':'Title-revealed recommendation',serviceDetail:curatedService==='mystery'?'Title remains secret; thoughtful packaging and a handwritten note are included. The book is charged at its listed M Books price.':'Marcus reveals the title and its listed M Books price for approval before purchase.',deliveryFee:deliveryFee,priceSummary:priceSummary,name:curatedValue('name'),recipient:curatedValue('recipient'),type:curatedValue('type'),genres:curatedGenres().join(', '),favourites:document.getElementById('favourites').value.trim(),avoid:document.getElementById('avoid').value.trim(),mood:document.getElementById('mood').value,pace:curatedValue('pace'),length:curatedValue('length'),fulfilment:fulfilment,note:curatedService==='mystery'?(document.getElementById('note').value.trim()||'Marcus to write a thoughtful note'):'Not included',extra:document.getElementById('extra').value.trim()||'None'};
 }
 
+var curatedMessageText = '';
+
 function buildCuratedReview() {
   var d=getCuratedDetails();
   var rows=[['For',d.recipient],['Reading mix',d.type],['Genres / subjects',d.genres],['Recent favourites',d.favourites],['Please avoid',d.avoid],['Reading mood',d.mood],['Pace',d.pace],['Length',d.length],['Fulfilment',d.fulfilment]];
@@ -1079,10 +1092,58 @@ function buildCuratedReview() {
   rows.forEach(function(row){html+='<dt>'+esc(row[0])+'</dt><dd>'+esc(row[1])+'</dd>';});document.getElementById('curatedReview').innerHTML=html+'</dl>';
   var lines=['Hi Marcus! I would like to request a personally chosen book from M Books.','','SERVICE: '+d.service,'PACKAGE: '+d.serviceDetail,'BOOK PRICE: The selected book’s listed M Books price','SHIPPING: '+(d.deliveryFee?'S$'+formatPrice(d.deliveryFee):'None — self-collect'),'','MY INTAKE','Name: '+d.name,'Choosing for: '+d.recipient,'Fiction / non-fiction: '+d.type,'Genres or subjects: '+d.genres,'Books or authors enjoyed: '+d.favourites,'Please avoid: '+d.avoid,'What I want from this read: '+d.mood,'Preferred pace: '+d.pace,'Preferred length: '+d.length,'Fulfilment: '+d.fulfilment];
   if(curatedService==='mystery')lines.push('Handwritten note: '+d.note);lines.push('Anything else: '+d.extra,'','Please confirm availability and the next step. Thank you!');
-  document.getElementById('curatedWhatsApp').href='https://wa.me/'+WA+'?text='+encodeURIComponent(lines.join('\n'));
+  curatedMessageText=lines.join('\n');
+  var waUrl='https://wa.me/'+WA+'?text='+encodeURIComponent(curatedMessageText);
+  document.getElementById('curatedWhatsApp').href=waUrl;
+  var retry=document.getElementById('retryCuratedWhatsApp');
+  if(retry) retry.href=waUrl;
 }
 
-function showCuratedSent() {setTimeout(function(){document.getElementById('curatedForm').style.display='none';document.getElementById('curatedHead').style.display='none';document.getElementById('curatedSuccess').classList.add('show');},150);}
+function showCuratedSent() {
+  setTimeout(function(){
+    document.getElementById('curatedForm').style.display='none';
+    document.getElementById('curatedHead').style.display='none';
+    document.getElementById('curatedSuccess').classList.add('show');
+  },150);
+}
+
+function copyCuratedText() {
+  if (!curatedMessageText) return;
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(curatedMessageText).then(showCopySuccess, function() {
+      fallbackCopyText(curatedMessageText);
+    });
+  } else {
+    fallbackCopyText(curatedMessageText);
+  }
+}
+
+function fallbackCopyText(text) {
+  var ta = document.createElement('textarea');
+  ta.value = text;
+  ta.style.position = 'fixed';
+  ta.style.left = '-9999px';
+  document.body.appendChild(ta);
+  ta.select();
+  try { document.execCommand('copy'); showCopySuccess(); } catch(e) {}
+  document.body.removeChild(ta);
+}
+
+function showCopySuccess() {
+  var msg = document.getElementById('copySuccessMsg');
+  if (msg) {
+    msg.style.display = 'block';
+    setTimeout(function(){ msg.style.display = 'none'; }, 2500);
+  }
+}
+
+function editCuratedAgain() {
+  document.getElementById('curatedSuccess').classList.remove('show');
+  document.getElementById('curatedForm').style.display = 'block';
+  document.getElementById('curatedHead').style.display = 'block';
+  curatedStep = 4;
+  showCuratedStep();
+}
 
 // \u2500\u2500 MODAL \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500
 function openBook(id) {
