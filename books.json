@@ -11779,7 +11779,7 @@
     "rrp": null,
     "rrp_source": "unverified_no_current_kinokuniya_product_match",
     "price": 8,
-    "sold": false,
+    "sold": true,
     "featured": false,
     "cover_url": "https://covers.openlibrary.org/b/title/The%20Rise%20and%20Fall%20of%20the%20US%20Mortgage%20and%20Credit%20Ma-L.jpg",
     "cover_source": "open_library",
