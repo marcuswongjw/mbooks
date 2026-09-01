@@ -2,6 +2,11 @@ name = "mbooks"
 main = "worker.js"
 compatibility_date = "2026-08-31"
 
+[vars]
+GITHUB_OWNER = "marcuswongjw"
+GITHUB_REPO = "mbooks"
+GITHUB_BRANCH = "main"
+
 [[routes]]
 pattern = "books.marcusw.xyz"
 custom_domain = true

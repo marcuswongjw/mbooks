@@ -488,7 +488,7 @@ header{background:rgba(255,255,255,.94);border-bottom:1px solid var(--line);box-
       <button onclick="doLogin()">Login</button>
       <div class="ap-err" id="apErr"></div>
       <div class="ap-token-info" style="margin-top:12px;">
-        After the password, a GitHub token popup appears if none is stored. Use Log out to replace a saved token. Changes go live in ~30 seconds.
+        Changes are saved on the server and go live in about 30 seconds.
       </div>
     </div>
     <div id="apBody" class="ap-body" style="display:none">
@@ -553,11 +553,7 @@ header{background:rgba(255,255,255,.94);border-bottom:1px solid var(--line);box-
 
 <script>
 // Config
-var GITHUB_USER = 'marcuswongjw';
-var GITHUB_REPO = 'mbooks';
-var GITHUB_BRANCH = 'main';
 var BOOKS_URL = 'books.json';
-var ADMIN_PWD = '8a6368e28715ee67a88abbd5684533e97d3c';
 var WA = '6596304128';
 var PER = 48;
 var MIN_FREE = 3;
@@ -575,7 +571,6 @@ var imgCache = {};
 var adminTab = 'all';
 var missingFilterOn = false;
 var editingId = null;
-var githubToken = '';
 var booksFileSha = '';
 var curatedService = 'revealed';
 var curatedStep = 1;
@@ -773,7 +768,7 @@ function checkImageExists(url) {
 // Admin: fetch + save all books to GitHub
 var fetchSaveProgress = 0;
 function fetchAndSaveAll() {
-  if (!githubToken) { alert('Please log in as admin first.'); return; }
+  if (!booksFileSha) { alert('Please log in as admin first.'); return; }
   var btn = document.getElementById('fetchSaveBtn');
   var statusEl = document.getElementById('apStatus');
   var total = BOOKS.length;
@@ -1188,16 +1183,19 @@ function modalCart(id) {
 function closeMod(){document.getElementById('ov').classList.remove('open');document.body.style.overflow='';if(lastFocus&&document.contains(lastFocus))lastFocus.focus();}
 
 // \u2500\u2500 ADMIN \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500
-function openAdmin(){document.getElementById('adminOv').classList.add('open');document.body.style.overflow='hidden';}
+function openAdmin(){
+  document.getElementById('adminOv').classList.add('open');
+  document.body.style.overflow='hidden';
+  restoreAdminSession();
+}
 function closeAdmin(){document.getElementById('adminOv').classList.remove('open');document.body.style.overflow='';}
 
-function promptGitHubToken() {
-  var t = prompt('Enter your GitHub Personal Access Token (stored locally only):');
-  if (!t) return '';
-  t = t.trim();
-  githubToken = t;
-  localStorage.setItem('mbooks_gh_token', t);
-  return t;
+function applyAdminCatalog(data) {
+  if (!data || !Array.isArray(data.books)) return;
+  BOOKS = data.books;
+  booksFileSha = data.sha || '';
+  apply();
+  renderStaffPicks();
 }
 
 function showAdminBody() {
@@ -1207,10 +1205,20 @@ function showAdminBody() {
   renderAdminRows();
 }
 
+function restoreAdminSession() {
+  fetch('/api/admin/catalog', {credentials:'same-origin'})
+    .then(function(r){ return r.ok ? r.json() : null; })
+    .then(function(data){
+      if (!data || !data.sha) return;
+      applyAdminCatalog(data);
+      showAdminBody();
+    })
+    .catch(function(){});
+}
+
 function logoutAdmin() {
-  githubToken = '';
+  fetch('/api/admin/logout', {method:'POST', credentials:'same-origin'}).catch(function(){});
   booksFileSha = '';
-  localStorage.removeItem('mbooks_gh_token');
   document.getElementById('apPwd').value = '';
   document.getElementById('apErr').textContent = '';
   document.getElementById('apBody').style.display = 'none';
@@ -1218,40 +1226,28 @@ function logoutAdmin() {
 }
 
 function doLogin() {
-  if (document.getElementById('apPwd').value !== ADMIN_PWD) {
-    document.getElementById('apErr').textContent='Incorrect password.'; return;
+  var password = document.getElementById('apPwd').value;
+  if (!password) {
+    document.getElementById('apErr').textContent='Enter the admin password.'; return;
   }
-  githubToken = localStorage.getItem('mbooks_gh_token') || '';
-  if (!githubToken && !promptGitHubToken()) {
-    document.getElementById('apErr').textContent='GitHub token is required to save changes.';
-    return;
-  }
-  document.getElementById('apErr').textContent='Checking GitHub token\u2026';
-  fetch('https://api.github.com/repos/'+GITHUB_USER+'/'+GITHUB_REPO+'/contents/books.json',
-    {headers:{'Authorization':'token '+githubToken}})
-    .then(function(r){return r.json().then(function(d){d._ok=r.ok; return d;});})
+  document.getElementById('apErr').textContent='Signing in\u2026';
+  fetch('/api/admin/login', {
+    method:'POST',
+    credentials:'same-origin',
+    headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({password: password})
+  }).then(function(r){ return r.json().then(function(d){ d._ok=r.ok; d._status=r.status; return d; }); })
     .then(function(d){
-      if (d._ok) { booksFileSha=d.sha; showAdminBody(); return; }
-      localStorage.removeItem('mbooks_gh_token');
-      githubToken = '';
-      document.getElementById('apErr').textContent='Saved GitHub token is invalid. Enter a new token.';
-      if (!promptGitHubToken()) return;
-      return fetch('https://api.github.com/repos/'+GITHUB_USER+'/'+GITHUB_REPO+'/contents/books.json',
-        {headers:{'Authorization':'token '+githubToken}})
-        .then(function(r){return r.json().then(function(d2){d2._ok=r.ok; return d2;});})
-        .then(function(d2){
-          if (!d2._ok) {
-            localStorage.removeItem('mbooks_gh_token');
-            githubToken = '';
-            document.getElementById('apErr').textContent='GitHub token rejected. Use a classic token with repo access.';
-            return;
-          }
-          booksFileSha=d2.sha;
-          showAdminBody();
-        });
+      if (!d._ok) {
+        document.getElementById('apErr').textContent = d._status===401 ? 'Incorrect password.' : (d.error||'Login failed.');
+        return;
+      }
+      applyAdminCatalog(d);
+      document.getElementById('apPwd').value = '';
+      showAdminBody();
     })
     .catch(function(){
-      document.getElementById('apErr').textContent='Could not reach GitHub. Check your connection.';
+      document.getElementById('apErr').textContent='Could not reach the server. Use books.marcusw.xyz.';
     });
 }
 
@@ -1370,40 +1366,42 @@ function saveEdit() {
 }
 
 // \u2500\u2500 SAVE TO GITHUB \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500
-function saveToGitHub(callback, retried) {
-  if (!githubToken) { alert('No GitHub token set. Please log out and log back in.'); return; }
+function saveToGitHub(callback) {
+  if (!booksFileSha) { alert('Please log in as admin first.'); return; }
   var btn=document.getElementById('apSaveBtn');
   btn.disabled=true; btn.textContent='Saving\u2026';
-  document.getElementById('apStatus').textContent='Uploading to GitHub\u2026';
-  var content=JSON.stringify(BOOKS, null, 2);
-  var encoded=btoa(unescape(encodeURIComponent(content)));
-  var payload={message:'Admin update: book data',content:encoded,branch:GITHUB_BRANCH};
-  if(booksFileSha) payload.sha=booksFileSha;
-  fetch('https://api.github.com/repos/'+GITHUB_USER+'/'+GITHUB_REPO+'/contents/books.json',{
+  document.getElementById('apStatus').textContent='Saving catalog\u2026';
+  fetch('/api/books', {
     method:'PUT',
-    headers:{'Authorization':'token '+githubToken,'Content-Type':'application/json'},
-    body:JSON.stringify(payload)
-  }).then(function(r){return r.json();})
+    credentials:'same-origin',
+    headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({sha: booksFileSha, books: BOOKS})
+  }).then(function(r){ return r.json().then(function(d){ d._ok=r.ok; d._status=r.status; return d; }); })
     .then(function(d){
-      if(d.content && d.content.sha){
-        booksFileSha=d.content.sha;
-        btn.disabled=false; btn.textContent='\u2714 Saved!';
-        document.getElementById('apStatus').textContent='\u2705 Saved to GitHub. Live in ~30 seconds.';
+      btn.disabled=false; btn.textContent='\uD83D\uDCBE Save to GitHub';
+      if (d._status === 409) {
+        document.getElementById('apStatus').textContent='Catalog changed elsewhere. Reloaded the latest copy \u2014 redo your edits, then save.';
+        applyAdminCatalog(d);
+        renderAdminRows();
+        return;
+      }
+      if (d._ok && d.sha) {
+        booksFileSha=d.sha;
+        btn.textContent='\u2714 Saved!';
+        document.getElementById('apStatus').textContent='\u2705 Saved. Live in ~30 seconds.';
         setTimeout(function(){btn.textContent='\uD83D\uDCBE Save to GitHub';},3000);
         if (typeof callback === 'function') callback();
-      } else {
-        btn.disabled=false; btn.textContent='\uD83D\uDCBE Save to GitHub';
-        if (d.message === 'Bad credentials' && !retried) {
-          localStorage.removeItem('mbooks_gh_token');
-          githubToken = '';
-          document.getElementById('apStatus').textContent='GitHub token invalid. Enter a new one.';
-          if (promptGitHubToken()) { saveToGitHub(callback, true); return; }
-        }
-        document.getElementById('apStatus').textContent='Error: '+(d.message||'Unknown error');
+        return;
       }
-    }).catch(function(e){
+      if (d._status === 401) {
+        document.getElementById('apStatus').textContent='Session expired. Log in again.';
+        logoutAdmin();
+        return;
+      }
+      document.getElementById('apStatus').textContent='Error: '+(d.error||'Unknown error');
+    }).catch(function(){
       btn.disabled=false; btn.textContent='\uD83D\uDCBE Save to GitHub';
-      document.getElementById('apStatus').textContent='Save failed. Check token permissions.';
+      document.getElementById('apStatus').textContent='Save failed. Check your connection.';
     });
 }
 
