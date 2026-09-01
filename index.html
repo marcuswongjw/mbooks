@@ -230,6 +230,7 @@ input:checked+.tslider:before{transform:translateX(16px);}
 .ap-status{font-size:0.74rem;color:var(--dtan);}
 .ap-save-btn{padding:9px 20px;background:var(--green);color:white;border:none;border-radius:22px;font-family:'Lato',sans-serif;font-weight:700;cursor:pointer;font-size:0.85rem;}
 .ap-save-btn:disabled{background:#ccc;cursor:not-allowed;}
+.ap-logout-btn{padding:9px 16px;background:transparent;color:var(--brown);border:1.5px solid rgba(201,169,110,.45);border-radius:22px;font-family:'Lato',sans-serif;font-weight:700;cursor:pointer;font-size:0.82rem;}
 .ap-token-info{font-size:0.7rem;color:var(--dtan);margin-top:4px;}
 
 /* EDIT MODAL */
@@ -389,7 +390,7 @@ header{background:rgba(255,255,255,.94);border-bottom:1px solid var(--line);box-
       <button onclick="doLogin()">Login</button>
       <div class="ap-err" id="apErr"></div>
       <div class="ap-token-info" style="margin-top:12px;">
-        Changes are saved directly to GitHub and go live in ~30 seconds.
+        After the password, a GitHub token popup appears if none is stored. Use Log out to replace a saved token. Changes go live in ~30 seconds.
       </div>
     </div>
     <div id="apBody" class="ap-body" style="display:none">
@@ -408,6 +409,7 @@ header{background:rgba(255,255,255,.94);border-bottom:1px solid var(--line);box-
         <span class="ap-status" id="apStatus"></span>
         <div style="display:flex;gap:8px;">
           <button id="fetchSaveBtn" type="button" onclick="showRetailImportNote()" style="padding:9px 16px;background:var(--dtan);color:white;border:none;border-radius:22px;font-family:'Lato',sans-serif;font-weight:700;cursor:pointer;font-size:0.82rem;" title="Current retail references use exact-match Singapore sources and documented foreign-price conversions">&#x1F50D; Retail sources managed</button>
+          <button class="ap-logout-btn" type="button" onclick="logoutAdmin()">Log out</button>
           <button class="ap-save-btn" id="apSaveBtn" onclick="saveToGitHub()">&#128190; Save to GitHub</button>
         </div>
       </div>
@@ -1000,27 +1002,68 @@ function closeMod(){document.getElementById('ov').classList.remove('open');docum
 function openAdmin(){document.getElementById('adminOv').classList.add('open');document.body.style.overflow='hidden';}
 function closeAdmin(){document.getElementById('adminOv').classList.remove('open');document.body.style.overflow='';}
 
+function promptGitHubToken() {
+  var t = prompt('Enter your GitHub Personal Access Token (stored locally only):');
+  if (!t) return '';
+  t = t.trim();
+  githubToken = t;
+  localStorage.setItem('mbooks_gh_token', t);
+  return t;
+}
+
+function showAdminBody() {
+  document.getElementById('apErr').textContent='';
+  document.getElementById('apLogin').style.display='none';
+  document.getElementById('apBody').style.display='flex';
+  renderAdminRows();
+}
+
+function logoutAdmin() {
+  githubToken = '';
+  booksFileSha = '';
+  localStorage.removeItem('mbooks_gh_token');
+  document.getElementById('apPwd').value = '';
+  document.getElementById('apErr').textContent = '';
+  document.getElementById('apBody').style.display = 'none';
+  document.getElementById('apLogin').style.display = 'block';
+}
+
 function doLogin() {
   if (document.getElementById('apPwd').value !== ADMIN_PWD) {
     document.getElementById('apErr').textContent='Incorrect password.'; return;
   }
-  // Get/prompt for GitHub token
-  var storedToken = localStorage.getItem('mbooks_gh_token');
-  if (storedToken) {
-    githubToken = storedToken;
-  } else {
-    githubToken = prompt('Enter your GitHub Personal Access Token (stored locally only):');
-    if (githubToken) localStorage.setItem('mbooks_gh_token', githubToken);
+  githubToken = localStorage.getItem('mbooks_gh_token') || '';
+  if (!githubToken && !promptGitHubToken()) {
+    document.getElementById('apErr').textContent='GitHub token is required to save changes.';
+    return;
   }
-  // Get current file SHA for updates
+  document.getElementById('apErr').textContent='Checking GitHub token\u2026';
   fetch('https://api.github.com/repos/'+GITHUB_USER+'/'+GITHUB_REPO+'/contents/books.json',
     {headers:{'Authorization':'token '+githubToken}})
-    .then(function(r){return r.json();})
-    .then(function(d){booksFileSha=d.sha;})
-    .catch(function(){});
-  document.getElementById('apLogin').style.display='none';
-  document.getElementById('apBody').style.display='flex';
-  renderAdminRows();
+    .then(function(r){return r.json().then(function(d){d._ok=r.ok; return d;});})
+    .then(function(d){
+      if (d._ok) { booksFileSha=d.sha; showAdminBody(); return; }
+      localStorage.removeItem('mbooks_gh_token');
+      githubToken = '';
+      document.getElementById('apErr').textContent='Saved GitHub token is invalid. Enter a new token.';
+      if (!promptGitHubToken()) return;
+      return fetch('https://api.github.com/repos/'+GITHUB_USER+'/'+GITHUB_REPO+'/contents/books.json',
+        {headers:{'Authorization':'token '+githubToken}})
+        .then(function(r){return r.json().then(function(d2){d2._ok=r.ok; return d2;});})
+        .then(function(d2){
+          if (!d2._ok) {
+            localStorage.removeItem('mbooks_gh_token');
+            githubToken = '';
+            document.getElementById('apErr').textContent='GitHub token rejected. Use a classic token with repo access.';
+            return;
+          }
+          booksFileSha=d2.sha;
+          showAdminBody();
+        });
+    })
+    .catch(function(){
+      document.getElementById('apErr').textContent='Could not reach GitHub. Check your connection.';
+    });
 }
 
 var adminTab='all', missingFilterOn=false;
@@ -1138,7 +1181,7 @@ function saveEdit() {
 }
 
 // \u2500\u2500 SAVE TO GITHUB \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500
-function saveToGitHub(callback) {
+function saveToGitHub(callback, retried) {
   if (!githubToken) { alert('No GitHub token set. Please log out and log back in.'); return; }
   var btn=document.getElementById('apSaveBtn');
   btn.disabled=true; btn.textContent='Saving\u2026';
@@ -1161,6 +1204,12 @@ function saveToGitHub(callback) {
         if (typeof callback === 'function') callback();
       } else {
         btn.disabled=false; btn.textContent='\uD83D\uDCBE Save to GitHub';
+        if (d.message === 'Bad credentials' && !retried) {
+          localStorage.removeItem('mbooks_gh_token');
+          githubToken = '';
+          document.getElementById('apStatus').textContent='GitHub token invalid. Enter a new one.';
+          if (promptGitHubToken()) { saveToGitHub(callback, true); return; }
+        }
         document.getElementById('apStatus').textContent='Error: '+(d.message||'Unknown error');
       }
     }).catch(function(e){
