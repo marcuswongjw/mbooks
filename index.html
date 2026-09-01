@@ -770,8 +770,11 @@ function esc(s) {
 
 function isMissing(b) {
   // Missing = no saved cover_url AND cover was confirmed unfound (cover_source='none')
-  // OR author is Unknown OR has an admin note flagging it
-  return (b.cover_source === 'none') || (!b.author || b.author === 'Unknown') || (b.notes && b.notes.length > 0);
+  // OR author is Unknown
+  return (b.cover_source === 'none') || (!b.author || b.author === 'Unknown');
+}
+function needsAdminAttention(b) {
+  return isMissing(b) || !hasVerifiedRetail(b) || !!(b.notes && b.notes.length > 0);
 }
 function hasVerifiedRetail(b) {
   var verifiedSource = b && (b.rrp_source === 'kinokuniya_sg_current_retail' || b.rrp_source === 'public_web_sgd_verified' || b.rrp_source === 'foreign_currency_converted_verified');
@@ -1244,7 +1247,7 @@ function getAdminList() {
   return BOOKS.filter(function(b) {
     var matchQ=!q||b.name.toLowerCase().indexOf(q)>-1||b.author.toLowerCase().indexOf(q)>-1;
     if (!matchQ) return false;
-    if (adminTab==='missing') return isMissing(b)||!hasVerifiedRetail(b);
+    if (adminTab==='missing') return needsAdminAttention(b);
     if (adminTab==='featured') return b.featured;
     if (adminTab==='sold') return b.sold;
     return true;
@@ -1253,14 +1256,15 @@ function getAdminList() {
 
 function renderAdminRows() {
   var list=getAdminList();
-  var missing=BOOKS.filter(function(b){return isMissing(b)||!hasVerifiedRetail(b);}).length;
+  var missing=BOOKS.filter(needsAdminAttention).length;
   var sold=BOOKS.filter(function(b){return b.sold;}).length;
   var feat=BOOKS.filter(function(b){return b.featured;}).length;
   document.getElementById('apStatus').textContent=sold+' sold \u00B7 '+feat+' featured \u00B7 '+missing+' need attention';
   if(!list.length){document.getElementById('apRows').innerHTML='<div style="text-align:center;padding:30px;color:var(--dtan);font-style:italic;">No books match.</div>';return;}
   document.getElementById('apRows').innerHTML=list.map(function(b){
     var flags=[];
-    if(isMissing(b)) flags.push('No cover');
+    if(b.cover_source==='none') flags.push('No cover');
+    if(!b.author||b.author==='Unknown') flags.push('Missing author');
     if(!hasVerifiedRetail(b)) flags.push('Retail ref. unverified');
     if(b.notes) flags.push('Note: '+b.notes.substring(0,20));
     var rowCls='ap-row'+(isMissing(b)?' missing':'')+(b.notes?' flagged':'');

@@ -115,3 +115,36 @@ test('fetchBookData is strictly cover-only and does not mutate price or rrp', ()
   assert.match(fn, /book\.cover_url\s*=/);
   assert.match(fn, /book\.cover_source\s*=/);
 });
+
+// ── Issue 12 Tests ───────────────────────────────────────────────────────────
+
+test('isMissing does not treat internal admin notes as missing info', () => {
+  const isMissingFn = extractFunction('isMissing');
+  const fn = new Function(isMissingFn + '; return isMissing;')();
+
+  // Book with note but valid cover and author is NOT missing
+  const bookWithNote = { id: 1, name: 'Great Book', author: 'Known Author', cover_source: 'google_books', notes: 'Check edition / signed copy' };
+  assert.equal(fn(bookWithNote), false);
+
+  // Book with confirmed missing cover IS missing
+  const bookNoCover = { id: 2, name: 'No Cover Book', author: 'Known Author', cover_source: 'none', notes: '' };
+  assert.equal(fn(bookNoCover), true);
+
+  // Book with unknown author IS missing
+  const bookNoAuthor = { id: 3, name: 'Unknown Book', author: 'Unknown', cover_source: 'google_books', notes: '' };
+  assert.equal(fn(bookNoAuthor), true);
+});
+
+test('admin attention logic captures notes and unverified retail without marking cards missing', () => {
+  const isMissingFn = extractFunction('isMissing');
+  const needsAdminAttentionFn = extractFunction('needsAdminAttention');
+  const hasVerifiedRetailFn = extractFunction('hasVerifiedRetail');
+
+  const fn = new Function(`${isMissingFn}\n${hasVerifiedRetailFn}\n${needsAdminAttentionFn}\nreturn needsAdminAttention;`)();
+
+  const normalBook = { id: 1, name: 'Good Book', author: 'Author', cover_source: 'manual', rrp: 20, price: 10, rrp_source: 'kinokuniya_sg_current_retail', rrp_currency: 'SGD', notes: '' };
+  assert.equal(fn(normalBook), false);
+
+  const flaggedBook = { ...normalBook, notes: 'Inspect spine' };
+  assert.equal(fn(flaggedBook), true);
+});
