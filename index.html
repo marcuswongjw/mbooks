@@ -1301,7 +1301,7 @@ function renderAdminRows() {
       +'<div class="ap-info">'
       +'<div class="ap-title">'+esc(b.name)+'</div>'
       +'<div class="ap-sub">'+esc(b.author)+' \u00B7 '+retailLabel+'</div>'
-      +(flags.length?'<div class="ap-flags">'+flags.map(function(f){return '<span class="ap-flag">'+f+'</span>';}).join('')+'</div>':'')
+      +(flags.length?'<div class="ap-flags">'+flags.map(function(f){return '<span class="ap-flag">'+esc(f)+'</span>';}).join('')+'</div>':'')
       +'</div>'
       +'<div class="ap-controls">'
       +'<button class="ap-feat-btn'+(b.featured?' on':'')+'" onclick="toggleFeat('+b.id+')">'+(b.featured?'\u2B50 Pick':'\u2606 Pick')+'</button>'
