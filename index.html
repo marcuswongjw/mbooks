@@ -275,6 +275,7 @@ header{background:rgba(255,255,255,.94);border-bottom:1px solid var(--line);box-
 @media(max-width:390px){.choice-grid,.check-grid{grid-template-columns:1fr;}.service-card{padding:21px;}.step-actions{align-items:stretch;}.step-actions-right{width:100%;}.form-btn{flex:1;padding:10px 12px;}}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto;}*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important;}}
 .field,.field fieldset{border:0;padding:0;min-width:0;}.field{margin:0 0 20px;}.field fieldset{margin:0;}
+.review-service span{white-space:normal;text-align:right;}@media(max-width:760px){.review-service{flex-direction:column;gap:6px;}.review-service span{text-align:left;}}
 .curated-section + .trust-section{margin-top:36px;}
 </style>
 </head>
@@ -350,10 +351,10 @@ header{background:rgba(255,255,255,.94);border-bottom:1px solid var(--line);box-
     <article class="service-card">
       <span class="service-label">Know before it ships</span>
       <h3>Reveal my recommendation</h3>
-      <div class="service-price"><span data-price="revealed">S$18</span> + delivery</div>
-      <p>Marcus chooses a book and tells you the title. You approve it before confirming your order.</p>
+      <div class="service-price">Book price + shipping</div>
+      <p>Marcus chooses a book and tells you the title. You approve it—and its listed M Books price—before confirming your order.</p>
       <ul class="service-list">
-        <li>One personally selected pre-loved book</li>
+        <li>Pay the selected book’s listed price</li>
         <li>Title revealed before purchase</li>
         <li>Free collection or <span data-delivery-price>S$4</span> Singapore delivery</li>
       </ul>
@@ -362,10 +363,10 @@ header{background:rgba(255,255,255,.94);border-bottom:1px solid var(--line);box-
     <article class="service-card mystery">
       <span class="service-label">The full surprise</span>
       <h3>Mystery book package</h3>
-      <div class="service-price"><span data-price="mystery">S$8</span> + shipping</div>
+      <div class="service-price">Book price + shipping</div>
       <p>The title stays secret. Marcus chooses, wraps, writes, and sends the whole experience to you.</p>
       <ul class="service-list">
-        <li>One personally selected pre-loved book</li>
+        <li>Pay the selected book’s listed price</li>
         <li>Thoughtful gift packaging</li>
         <li>A handwritten note</li>
         <li>Free collection or <span data-delivery-price>S$4</span> Singapore shipping</li>
@@ -558,9 +559,6 @@ var WA = '6596304128';
 var PER = 48;
 var MIN_FREE = 3;
 var DELIVERY = 4;
-// Curated service prices (SGD). Edit these two values to update cards, totals, and WhatsApp messages.
-var CURATED_REVEALED_PRICE = 18;
-var CURATED_MYSTERY_PRICE = 8;
 
 // State
 var BOOKS = [];
@@ -595,8 +593,6 @@ function init() {
   cart = [];
   try { cart = JSON.parse(localStorage.getItem('mbooks_cart') || '[]'); } catch(e) {}
   document.querySelectorAll('.gb').forEach(function(btn){btn.setAttribute('aria-pressed',btn.classList.contains('active')?'true':'false');});
-  document.querySelectorAll('[data-price="revealed"]').forEach(function(el){el.textContent='S$'+formatPrice(CURATED_REVEALED_PRICE);});
-  document.querySelectorAll('[data-price="mystery"]').forEach(function(el){el.textContent='S$'+formatPrice(CURATED_MYSTERY_PRICE);});
   document.querySelectorAll('[data-delivery-price]').forEach(function(el){el.textContent='S$'+formatPrice(DELIVERY);});
   fetchBooks();
 }
@@ -1100,17 +1096,17 @@ function getCuratedDetails() {
   var fulfilment = curatedValue('fulfilment');
   var deliveryFee = fulfilment.indexOf('delivery') > -1 ? DELIVERY : 0;
   fulfilment = deliveryFee ? 'Singapore delivery (+S$'+formatPrice(DELIVERY)+')' : 'Self-collect (Tampines / Paya Lebar)';
-  var basePrice = curatedService === 'mystery' ? CURATED_MYSTERY_PRICE : CURATED_REVEALED_PRICE;
-  return {service:curatedService==='mystery'?'Mystery book package':'Title-revealed recommendation',serviceDetail:curatedService==='mystery'?'Title remains secret; book, thoughtful packaging, and handwritten note included. Shipping is charged separately.':'Marcus reveals the title for approval before purchase; one pre-loved book included.',basePrice:basePrice,total:basePrice+deliveryFee,name:curatedValue('name'),recipient:curatedValue('recipient'),type:curatedValue('type'),genres:curatedGenres().join(', '),favourites:document.getElementById('favourites').value.trim(),avoid:document.getElementById('avoid').value.trim(),mood:document.getElementById('mood').value,pace:curatedValue('pace'),length:curatedValue('length'),fulfilment:fulfilment,note:curatedService==='mystery'?(document.getElementById('note').value.trim()||'Marcus to write a thoughtful note'):'Not included',extra:document.getElementById('extra').value.trim()||'None'};
+  var priceSummary = 'Selected book’s listed price' + (deliveryFee ? ' + S$'+formatPrice(DELIVERY)+' shipping' : ' · free self-collect');
+  return {service:curatedService==='mystery'?'Mystery book package':'Title-revealed recommendation',serviceDetail:curatedService==='mystery'?'Title remains secret; thoughtful packaging and a handwritten note are included. The book is charged at its listed M Books price.':'Marcus reveals the title and its listed M Books price for approval before purchase.',deliveryFee:deliveryFee,priceSummary:priceSummary,name:curatedValue('name'),recipient:curatedValue('recipient'),type:curatedValue('type'),genres:curatedGenres().join(', '),favourites:document.getElementById('favourites').value.trim(),avoid:document.getElementById('avoid').value.trim(),mood:document.getElementById('mood').value,pace:curatedValue('pace'),length:curatedValue('length'),fulfilment:fulfilment,note:curatedService==='mystery'?(document.getElementById('note').value.trim()||'Marcus to write a thoughtful note'):'Not included',extra:document.getElementById('extra').value.trim()||'None'};
 }
 
 function buildCuratedReview() {
   var d=getCuratedDetails();
   var rows=[['For',d.recipient],['Reading mix',d.type],['Genres / subjects',d.genres],['Recent favourites',d.favourites],['Please avoid',d.avoid],['Reading mood',d.mood],['Pace',d.pace],['Length',d.length],['Fulfilment',d.fulfilment]];
   if(curatedService==='mystery')rows.push(['Handwritten note',d.note]);rows.push(['Anything else',d.extra]);
-  var html='<div class="review-service"><strong>'+esc(d.service)+'</strong><span>S$'+formatPrice(d.total)+'</span></div><dl class="review-list">';
+  var html='<div class="review-service"><strong>'+esc(d.service)+'</strong><span>'+esc(d.priceSummary)+'</span></div><dl class="review-list">';
   rows.forEach(function(row){html+='<dt>'+esc(row[0])+'</dt><dd>'+esc(row[1])+'</dd>';});document.getElementById('curatedReview').innerHTML=html+'</dl>';
-  var lines=['Hi Marcus! I would like to request a personally chosen book from M Books.','','SERVICE: '+d.service,'PACKAGE: '+d.serviceDetail,'PRICE: S$'+formatPrice(d.total)+(d.total!==d.basePrice?' (S$'+formatPrice(d.basePrice)+' book package + S$'+DELIVERY+' delivery)':''),'','MY INTAKE','Name: '+d.name,'Choosing for: '+d.recipient,'Fiction / non-fiction: '+d.type,'Genres or subjects: '+d.genres,'Books or authors enjoyed: '+d.favourites,'Please avoid: '+d.avoid,'What I want from this read: '+d.mood,'Preferred pace: '+d.pace,'Preferred length: '+d.length,'Fulfilment: '+d.fulfilment];
+  var lines=['Hi Marcus! I would like to request a personally chosen book from M Books.','','SERVICE: '+d.service,'PACKAGE: '+d.serviceDetail,'BOOK PRICE: The selected book’s listed M Books price','SHIPPING: '+(d.deliveryFee?'S$'+formatPrice(d.deliveryFee):'None — self-collect'),'','MY INTAKE','Name: '+d.name,'Choosing for: '+d.recipient,'Fiction / non-fiction: '+d.type,'Genres or subjects: '+d.genres,'Books or authors enjoyed: '+d.favourites,'Please avoid: '+d.avoid,'What I want from this read: '+d.mood,'Preferred pace: '+d.pace,'Preferred length: '+d.length,'Fulfilment: '+d.fulfilment];
   if(curatedService==='mystery')lines.push('Handwritten note: '+d.note);lines.push('Anything else: '+d.extra,'','Please confirm availability and the next step. Thank you!');
   document.getElementById('curatedWhatsApp').href='https://wa.me/'+WA+'?text='+encodeURIComponent(lines.join('\n'));
 }
