@@ -178,3 +178,80 @@ test('renderDrawer unlocks free delivery at exactly 5 books', () => {
   assert.match(res5.itemsHtml, /Free delivery unlocked!/);
   assert.match(decodeURIComponent(res5.waHref), /Delivery: Free \(5\+ books unlocked!\)/);
 });
+
+// ── Phase 2 Tests ─────────────────────────────────────────────────────────────
+
+test('mobile floating cart bar markup and styling exist', () => {
+  assert.match(html, /id="mobileCartBar"/);
+  assert.match(html, /class="mobile-cart-bar"/);
+  assert.match(html, /id="mcbCount"/);
+  assert.match(html, /id="mcbTotal"/);
+  assert.match(html, /function\s+syncMobileCartBar\s*\(/);
+});
+
+test('search clear button and escape key binding exist in search wrapper', () => {
+  assert.match(html, /id="searchClearBtn"/);
+  assert.match(html, /class="search-clear"/);
+  assert.match(html, /onclick="clearSearch\(\)"/);
+  assert.match(html, /event\.key==='Escape'/);
+  assert.match(html, /function\s+clearSearch\s*\(/);
+  assert.match(html, /function\s+resetFilters\s*\(/);
+});
+
+test('renderGrid empty state includes reset search and filters action', () => {
+  const renderGridFn = extractFunction('renderGrid');
+  assert.match(renderGridFn, /onclick="resetFilters\(\)"/);
+  assert.match(renderGridFn, /Reset search &amp; filters/);
+});
+
+test('syncMobileCartBar updates item count and total when cart has items', () => {
+  const syncFn = extractFunction('syncMobileCartBar');
+  const formatPriceFn = extractFunction('formatPrice');
+
+  let classStore = { mobileCartBar: new Set() };
+  let textStore = {};
+
+  const fakeElement = (id) => ({
+    classList: {
+      toggle(cls, val) {
+        if (val) classStore[id].add(cls);
+        else classStore[id].delete(cls);
+      },
+      contains(cls) { return classStore[id].has(cls); }
+    },
+    set textContent(val) { textStore[id] = val; },
+    get textContent() { return textStore[id] || ''; }
+  });
+
+  ['mobileCartBar', 'drawer', 'ov', 'curatedOv'].forEach((id) => {
+    classStore[id] = new Set();
+  });
+
+  const fakeDocument = {
+    getElementById(id) { return fakeElement(id); }
+  };
+
+  const scope = {
+    cart: [{ id: 1, price: 15 }, { id: 2, price: 20 }],
+    document: fakeDocument,
+    formatPrice: new Function(formatPriceFn + '; return formatPrice;')()
+  };
+
+  const fn = new Function('scope', `
+    with(scope) {
+      ${syncFn}
+      syncMobileCartBar();
+    }
+  `);
+
+  fn(scope);
+
+  assert.equal(classStore['mobileCartBar'].has('show'), true);
+  assert.equal(textStore['mcbCount'], '2 books');
+  assert.equal(textStore['mcbTotal'], 'S$35');
+
+  // When drawer is open, bar should hide
+  classStore['drawer'].add('open');
+  fn(scope);
+  assert.equal(classStore['mobileCartBar'].has('show'), false);
+});

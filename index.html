@@ -293,6 +293,40 @@ header{background:rgba(255,255,255,.94);border-bottom:1px solid var(--line);box-
 .drw-ful-text{display:flex;flex-direction:column;line-height:1.25;}
 .drw-ful-text strong{font-size:0.77rem;color:var(--dbrown);}
 .drw-ful-text small{font-size:0.65rem;color:var(--dtan);margin-top:2px;}
+.sw{position:relative;}
+.search-clear{position:absolute;right:9px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--dtan);cursor:pointer;width:24px;height:24px;border-radius:50%;display:none;align-items:center;justify-content:center;font-size:0.75rem;transition:all .15s;}
+.search-clear:hover{color:var(--dbrown);background:rgba(18,34,53,.08);}
+.search-clear.show{display:flex;}
+.mobile-cart-bar{display:none;}
+@media(max-width:760px){
+  .mobile-cart-bar{
+    position:fixed;
+    left:14px;
+    right:14px;
+    bottom:calc(14px + env(safe-area-inset-bottom, 0px));
+    z-index:190;
+    background:var(--dbrown);
+    color:#fff;
+    border-radius:14px;
+    padding:10px 14px;
+    box-shadow:0 10px 28px rgba(18,34,53,.35);
+    display:none;
+    align-items:center;
+    justify-content:space-between;
+    gap:10px;
+    cursor:pointer;
+    border:1px solid rgba(255,255,255,.15);
+    backdrop-filter:blur(8px);
+    transition:transform .2s ease,opacity .2s ease;
+  }
+  .mobile-cart-bar.show{display:flex;}
+  .mcb-left{display:flex;align-items:center;gap:10px;}
+  .mcb-icon{font-size:1.25rem;line-height:1;}
+  .mcb-info{display:flex;flex-direction:column;line-height:1.2;}
+  .mcb-info strong{font-size:0.84rem;color:#fff;}
+  .mcb-info span{font-size:0.75rem;color:var(--gold);font-weight:700;}
+  .mcb-btn{background:var(--green);color:#fff;font-size:0.78rem;font-weight:700;padding:8px 13px;border-radius:9px;white-space:nowrap;}
+}
 </style>
 </head>
 <body>
@@ -306,7 +340,8 @@ header{background:rgba(255,255,255,.94);border-bottom:1px solid var(--line);box-
       <div class="sw">
         <label class="sr-only" for="si">Search books by title or author</label>
         <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="6"/><path d="m21 21-4.35-4.35"/></svg>
-        <input type="search" id="si" placeholder="Search title or author" oninput="doSearch()">
+        <input type="search" id="si" placeholder="Search title or author" oninput="doSearch()" onkeydown="if(event.key==='Escape')clearSearch()">
+        <button type="button" id="searchClearBtn" class="search-clear" onclick="clearSearch()" aria-label="Clear search" title="Clear search">&#x2715;</button>
       </div>
       <div class="hcnt" id="hcnt">Loading&hellip;</div>
       <button class="cart-btn" type="button" onclick="openCart()" aria-label="Open cart">&#x1F6D2; Cart<span class="cbadge" id="cbadge"></span></button>
@@ -413,6 +448,18 @@ header{background:rgba(255,255,255,.94);border-bottom:1px solid var(--line);box-
   <div class="grid" id="grid"><div class="loading-state">Loading books&hellip;</div></div>
   <div class="pag" id="pag"></div>
 </main>
+
+<!-- MOBILE FLOATING CART BAR -->
+<div class="mobile-cart-bar" id="mobileCartBar" onclick="openCart()" role="button" tabindex="0" aria-label="Open cart">
+  <div class="mcb-left">
+    <span class="mcb-icon">&#x1F6D2;</span>
+    <div class="mcb-info">
+      <strong id="mcbCount">0 books</strong>
+      <span id="mcbTotal">S$0</span>
+    </div>
+  </div>
+  <div class="mcb-btn">View Cart &amp; Order &rarr;</div>
+</div>
 
 <!-- CART -->
 <div class="cart-ov" id="cartOv" onclick="closeCart()"></div>
@@ -891,7 +938,13 @@ function renderStaffPicks() {
 function renderGrid() {
   var start = (pg-1)*PER, slice = filtered.slice(start, start+PER);
   var g = document.getElementById('grid');
-  if (!slice.length) { g.innerHTML='<div class="empty"><h3>No books found</h3><p>Try a different search or genre.</p></div>'; return; }
+  if (!slice.length) {
+    var desc = srch
+      ? 'We couldn’t find any books matching "<strong>' + esc(srch) + '</strong>"' + (genre !== 'all' ? ' in <em>' + esc(genre) + '</em>' : '') + '.'
+      : (genre !== 'all' ? 'No books currently available in <em>' + esc(genre) + '</em>.' : 'No books found.');
+    g.innerHTML = '<div class="empty"><h3>No books found</h3><p style="margin-top:6px;margin-bottom:16px;">' + desc + '</p><button type="button" class="form-btn primary" onclick="resetFilters()">Reset search &amp; filters</button></div>';
+    return;
+  }
   g.innerHTML = slice.map(makeCard).join('');
   setTimeout(setupLazy, 50);
 }
@@ -932,7 +985,38 @@ function apply() {
 }
 
 function setG(g,btn) { genre=g; document.querySelectorAll('.gb').forEach(function(b){b.classList.remove('active');b.setAttribute('aria-pressed','false');});btn.classList.add('active');btn.setAttribute('aria-pressed','true');apply(); }
-function doSearch() { srch=document.getElementById('si').value.toLowerCase(); apply(); }
+function doSearch() {
+  srch = (document.getElementById('si').value || '').trim().toLowerCase();
+  var clearBtn = document.getElementById('searchClearBtn');
+  if (clearBtn) clearBtn.classList.toggle('show', srch.length > 0);
+  apply();
+}
+function clearSearch() {
+  var input = document.getElementById('si');
+  if (input) { input.value = ''; input.focus(); }
+  var clearBtn = document.getElementById('searchClearBtn');
+  if (clearBtn) clearBtn.classList.remove('show');
+  srch = '';
+  apply();
+}
+function resetFilters() {
+  srch = '';
+  var input = document.getElementById('si');
+  if (input) input.value = '';
+  var clearBtn = document.getElementById('searchClearBtn');
+  if (clearBtn) clearBtn.classList.remove('show');
+  genre = 'all';
+  document.querySelectorAll('.gb').forEach(function(b){
+    b.classList.remove('active');
+    b.setAttribute('aria-pressed', 'false');
+  });
+  var allBtn = document.querySelector('.gb');
+  if (allBtn) {
+    allBtn.classList.add('active');
+    allBtn.setAttribute('aria-pressed', 'true');
+  }
+  apply();
+}
 function doSort() { srt=document.getElementById('srt').value; apply(); }
 function goP(p) {
   var tot=Math.ceil(filtered.length/PER);
@@ -974,11 +1058,29 @@ function syncCard(id) {
     if(btn){btn.textContent=ic?'\u2713':'+';btn.setAttribute('aria-pressed',ic?'true':'false');btn.setAttribute('aria-label',(ic?'Remove ':'Add ')+(book?book.name:'book')+(ic?' from cart':' to cart'));}
   });
 }
+function syncMobileCartBar() {
+  var mcb = document.getElementById('mobileCartBar');
+  if (!mcb) return;
+  var isDrawerOpen = document.getElementById('drawer') && document.getElementById('drawer').classList.contains('open');
+  var isModalOpen = document.getElementById('ov') && document.getElementById('ov').classList.contains('open');
+  var isCuratedOpen = document.getElementById('curatedOv') && document.getElementById('curatedOv').classList.contains('open');
+  var shouldShow = cart.length > 0 && !isDrawerOpen && !isModalOpen && !isCuratedOpen;
+  mcb.classList.toggle('show', shouldShow);
+  if (shouldShow) {
+    var tP = cart.reduce(function(s,c){return s+Number(c.price);},0);
+    var cntEl = document.getElementById('mcbCount');
+    var totEl = document.getElementById('mcbTotal');
+    if (cntEl) cntEl.textContent = cart.length + ' book' + (cart.length !== 1 ? 's' : '');
+    if (totEl) totEl.textContent = 'S$' + formatPrice(tP);
+  }
+}
+
 function updateCartUI() {
   var n=cart.length;
   var badge=document.getElementById('cbadge');
   badge.textContent=n; badge.classList.toggle('show',n>0);
   document.getElementById('drwCnt').textContent=n+' item'+(n!==1?'s':'');
+  syncMobileCartBar();
   renderDrawer();
 }
 function setCartFulfillment(mode) {
@@ -1082,8 +1184,8 @@ function renderDrawer() {
   document.getElementById('waBtn').href='https://wa.me/'+WA+'?text='+encodeURIComponent(lines.join('\n'));
 }
 var lastFocus = null;
-function openCart(){lastFocus=document.activeElement;document.getElementById('cartOv').classList.add('open');document.getElementById('drawer').classList.add('open');document.body.style.overflow='hidden';renderDrawer();setTimeout(function(){document.getElementById('drawerClose').focus();},0);}
-function closeCart(){document.getElementById('cartOv').classList.remove('open');document.getElementById('drawer').classList.remove('open');document.body.style.overflow='';if(lastFocus&&document.contains(lastFocus))lastFocus.focus();}
+function openCart(){lastFocus=document.activeElement;document.getElementById('cartOv').classList.add('open');document.getElementById('drawer').classList.add('open');document.body.style.overflow='hidden';syncMobileCartBar();renderDrawer();setTimeout(function(){document.getElementById('drawerClose').focus();},0);}
+function closeCart(){document.getElementById('cartOv').classList.remove('open');document.getElementById('drawer').classList.remove('open');document.body.style.overflow='';syncMobileCartBar();if(lastFocus&&document.contains(lastFocus))lastFocus.focus();}
 
 var curatedStepNames = ['About your reading','Your tastes','Reading mood','Review'];
 
@@ -1096,22 +1198,25 @@ function openCurated(service) {
   form.style.display = 'block';
   document.getElementById('curatedHead').style.display = 'block';
   document.getElementById('curatedSuccess').classList.remove('show');
-  var fulfilment = document.getElementById('fulfilmentField');
+  var fulfilment = document.getElementById('fuldelivField') || document.getElementById('fulfilmentField');
   var note = document.getElementById('noteField');
-  var fulfilmentInputs = fulfilment.querySelectorAll('input');
-  fulfilment.style.display = 'block';
-  fulfilmentInputs.forEach(function(input){input.required=true;});
+  if (fulfilment) {
+    var fulfilmentInputs = fulfilment.querySelectorAll('input');
+    fulfilment.style.display = 'block';
+    fulfilmentInputs.forEach(function(input){input.required=true;});
+  }
   if (curatedService === 'mystery') {
-    note.style.display = 'block';
+    if (note) note.style.display = 'block';
     document.getElementById('curatedModalTitle').textContent = 'Your mystery book package';
   } else {
-    note.style.display = 'none';
+    if (note) note.style.display = 'none';
     document.getElementById('curatedModalTitle').textContent = 'Your title-revealed recommendation';
   }
   document.getElementById('genreError').classList.remove('show');
   showCuratedStep();
   document.getElementById('curatedOv').classList.add('open');
   document.body.style.overflow = 'hidden';
+  syncMobileCartBar();
   setTimeout(function(){document.getElementById('curatedName').focus();},0);
 }
 
@@ -1119,6 +1224,7 @@ function closeCurated() {
   var overlay = document.getElementById('curatedOv');
   if (!overlay.classList.contains('open')) return;
   overlay.classList.remove('open'); document.body.style.overflow = '';
+  syncMobileCartBar();
   if (lastFocus && document.contains(lastFocus)) lastFocus.focus();
 }
 
@@ -1273,6 +1379,7 @@ function openBook(id) {
   } else { ss.style.display='none'; }
   document.getElementById('ov').classList.add('open');
   document.body.style.overflow='hidden';
+  syncMobileCartBar();
   setTimeout(function(){document.getElementById('modalClose').focus();},0);
 }
 function makeBuyUrl(b) {
@@ -1284,15 +1391,16 @@ function modalCart(id) {
   var btn=document.getElementById('matcBtn');
   if(btn){var ic=inCart(id);btn.textContent=ic?'\u2713 In cart':'+ Add to cart';btn.classList.toggle('added',ic);btn.setAttribute('aria-pressed',ic?'true':'false');}
 }
-function closeMod(){document.getElementById('ov').classList.remove('open');document.body.style.overflow='';if(lastFocus&&document.contains(lastFocus))lastFocus.focus();}
+function closeMod(){document.getElementById('ov').classList.remove('open');document.body.style.overflow='';syncMobileCartBar();if(lastFocus&&document.contains(lastFocus))lastFocus.focus();}
 
 // ──────────────────────────────────────────────────────────────────
 function openAdmin(){
   document.getElementById('adminOv').classList.add('open');
   document.body.style.overflow='hidden';
+  syncMobileCartBar();
   restoreAdminSession();
 }
-function closeAdmin(){document.getElementById('adminOv').classList.remove('open');document.body.style.overflow='';}
+function closeAdmin(){document.getElementById('adminOv').classList.remove('open');document.body.style.overflow='';syncMobileCartBar();}
 
 function applyAdminCatalog(data) {
   if (!data || !Array.isArray(data.books)) return;
