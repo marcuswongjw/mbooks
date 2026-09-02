@@ -277,6 +277,22 @@ header{background:rgba(255,255,255,.94);border-bottom:1px solid var(--line);box-
 .field,.field fieldset{border:0;padding:0;min-width:0;}.field{margin:0 0 20px;}.field fieldset{margin:0;}
 .review-service span{white-space:normal;text-align:right;}@media(max-width:760px){.review-service{flex-direction:column;gap:6px;}.review-service span{text-align:left;}}
 .curated-section + .trust-section{margin-top:36px;}
+.drw-progress-card{background:#f4f7f9;border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin-bottom:14px;}
+.drw-progress-card.free{background:rgba(8,127,62,.07);border-color:rgba(8,127,62,.24);}
+.drw-progress-header{display:flex;justify-content:space-between;align-items:center;font-size:0.77rem;color:var(--dbrown);margin-bottom:8px;gap:8px;}
+.drw-progress-count{font-weight:700;color:var(--dtan);font-size:0.72rem;flex-shrink:0;background:rgba(18,34,53,.06);padding:2px 7px;border-radius:6px;}
+.drw-progress-card.free .drw-progress-count{color:var(--green);background:rgba(8,127,62,.12);}
+.drw-progress-track{width:100%;height:7px;background:#e2e9ef;border-radius:5px;overflow:hidden;}
+.drw-progress-fill{height:100%;background:var(--gold);border-radius:5px;transition:width .3s ease;}
+.drw-progress-card.free .drw-progress-fill{background:var(--green);}
+.drw-fulfillment-selector{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px;}
+.drw-ful-btn{display:flex;align-items:flex-start;gap:8px;padding:10px 11px;background:#fff;border:1.5px solid var(--line);border-radius:10px;cursor:pointer;text-align:left;font-family:inherit;transition:all .18s;}
+.drw-ful-btn:hover{border-color:var(--brown);}
+.drw-ful-btn.active{border-color:var(--dbrown);background:#f2f6f9;box-shadow:0 0 0 1px var(--dbrown);}
+.drw-ful-icon{font-size:1.1rem;line-height:1.2;flex-shrink:0;}
+.drw-ful-text{display:flex;flex-direction:column;line-height:1.25;}
+.drw-ful-text strong{font-size:0.77rem;color:var(--dbrown);}
+.drw-ful-text small{font-size:0.65rem;color:var(--dtan);margin-top:2px;}
 </style>
 </head>
 <body>
@@ -333,7 +349,7 @@ header{background:rgba(255,255,255,.94);border-bottom:1px solid var(--line);box-
     </div>
     <div class="hero-tags" aria-label="M Books offers">
       <div class="hero-tag">Prices from S$6</div>
-      <div class="hero-tag green">Free delivery on 3+ books</div>
+      <div class="hero-tag green">Free delivery on 5+ books</div>
     </div>
   </div>
 </section>
@@ -404,8 +420,10 @@ header{background:rgba(255,255,255,.94);border-bottom:1px solid var(--line);box-
   <div class="drh"><div><h2 id="cartTitle">&#x1F6D2; Your Cart</h2><span id="drwCnt">0 items</span></div><button class="drc" id="drawerClose" type="button" onclick="closeCart()" aria-label="Close cart">&#x2715;</button></div>
   <div class="dri" id="drwItems"></div>
   <div id="drwFoot" style="display:none" class="drf">
+    <div id="drwFulfillment"></div>
     <div class="tots">
       <div class="tr strike"><span>Total RRP</span><span id="tRrp"></span></div>
+      <div class="tr" id="delivRow"><span>Delivery</span><span id="tDeliv"></span></div>
       <div class="tr main"><span>Your Total</span><span id="tPrice"></span></div>
       <div class="tr saved"><span id="tSaved"></span></div>
     </div>
@@ -568,12 +586,13 @@ header{background:rgba(255,255,255,.94);border-bottom:1px solid var(--line);box-
 var BOOKS_URL = 'books.json';
 var WA = '6596304128';
 var PER = 48;
-var MIN_FREE = 3;
+var MIN_FREE = 5;
 var DELIVERY = 4;
 
 // State
 var BOOKS = [];
 var cart = [];
+var cartFulfillment = 'delivery';
 var filtered = [];
 var pg = 1, genre = 'all', srch = '', srt = 'az';
 var imgCache = {};
@@ -603,6 +622,7 @@ var phIcon = {
 function init() {
   cart = [];
   try { cart = JSON.parse(localStorage.getItem('mbooks_cart') || '[]'); } catch(e) {}
+  try { cartFulfillment = localStorage.getItem('mbooks_fulfillment') || 'delivery'; } catch(e) {}
   document.querySelectorAll('.gb').forEach(function(btn){btn.setAttribute('aria-pressed',btn.classList.contains('active')?'true':'false');});
   document.querySelectorAll('[data-delivery-price]').forEach(function(el){el.textContent='S$'+formatPrice(DELIVERY);});
   try {
@@ -961,6 +981,12 @@ function updateCartUI() {
   document.getElementById('drwCnt').textContent=n+' item'+(n!==1?'s':'');
   renderDrawer();
 }
+function setCartFulfillment(mode) {
+  cartFulfillment = mode === 'collect' ? 'collect' : 'delivery';
+  try { localStorage.setItem('mbooks_fulfillment', cartFulfillment); } catch(e) {}
+  renderDrawer();
+}
+
 function renderDrawer() {
   var items=document.getElementById('drwItems'), foot=document.getElementById('drwFoot');
   if (!cart.length) {
@@ -969,10 +995,21 @@ function renderDrawer() {
   }
   foot.style.display='block';
   var free=cart.length>=MIN_FREE, need=MIN_FREE-cart.length;
-  var nb=free?'rgba(37,211,102,.12)':'rgba(201,169,110,.1)';
-  var nc=free?'#1a7a3a':'#a07840';
-  var nt=free?'\uD83D\uDE9A Free delivery unlocked! ('+cart.length+' books)':'Add '+need+' more book'+(need!==1?'s':'')+' for free delivery \uD83D\uDE9A';
-  var html='<div style="background:'+nb+';border:1px solid '+(free?'rgba(37,211,102,.3)':'rgba(201,169,110,.25)')+';color:'+nc+';border-radius:8px;padding:8px 12px;margin-bottom:10px;font-size:0.74rem;font-weight:700;">'+nt+'</div>';
+  var pct=Math.min(100, Math.round((cart.length/MIN_FREE)*100));
+  var isDelivery=cartFulfillment==='delivery';
+
+  var progMsg = free
+    ? '🎉 <strong>Free delivery unlocked!</strong> ('+cart.length+' books)'
+    : '🚚 Add <strong>'+need+' more book'+(need!==1?'s':'')+'</strong> for free delivery';
+  var progHtml = '<div class="drw-progress-card'+(free?' free':'')+'">'
+    + '<div class="drw-progress-header">'
+    + '<span>'+progMsg+'</span>'
+    + '<span class="drw-progress-count">'+Math.min(cart.length,MIN_FREE)+'/'+MIN_FREE+'</span>'
+    + '</div>'
+    + '<div class="drw-progress-track"><div class="drw-progress-fill" style="width:'+pct+'%"></div></div>'
+    + '</div>';
+
+  var html = progHtml;
   cart.forEach(function(c) {
     var verifiedRetail=!!(c.rrpVerified && Number(c.rrp)>Number(c.price));
     var auth=(c.author&&c.author!=='Unknown')?c.author:'';
@@ -983,9 +1020,25 @@ function renderDrawer() {
     html+='<div class="ci"><div class="ci-info"><div class="ci-title">'+esc(c.name)+'</div>'+(auth?'<div class="ci-auth">'+esc(auth)+'</div>':'')+'<div class="ci-pp">'+itemPrice+'</div></div><button class="ci-rm" type="button" aria-label="Remove '+esc(c.name)+' from cart" onclick="removeFromCart('+c.id+')">&#x2715;</button></div>';
   });
   items.innerHTML=html;
+
+  var fulHtml = '<div class="drw-fulfillment-selector" role="radiogroup" aria-label="Fulfillment method">'
+    + '<button type="button" class="drw-ful-btn'+(!isDelivery?' active':'')+'" onclick="setCartFulfillment(\'collect\')" role="radio" aria-checked="'+(!isDelivery?'true':'false')+'">'
+    + '<span class="drw-ful-icon">📍</span>'
+    + '<span class="drw-ful-text"><strong>Self-collect</strong><small>Tampines / Paya Lebar · Free</small></span>'
+    + '</button>'
+    + '<button type="button" class="drw-ful-btn'+(isDelivery?' active':'')+'" onclick="setCartFulfillment(\'delivery\')" role="radio" aria-checked="'+(isDelivery?'true':'false')+'">'
+    + '<span class="drw-ful-icon">🚚</span>'
+    + '<span class="drw-ful-text"><strong>Doorstep delivery</strong><small>'+(free?'Free (5+ books unlocked!)':'+S$'+DELIVERY+' standard delivery')+'</small></span>'
+    + '</button>'
+    + '</div>';
+  var fulEl = document.getElementById('drwFulfillment');
+  if (fulEl) fulEl.innerHTML = fulHtml;
+
   var allVerified=cart.every(function(c){return c.rrpVerified && Number(c.rrp)>Number(c.price);});
   var tP=cart.reduce(function(s,c){return s+Number(c.price);},0);
-  var del=free?0:DELIVERY, grand=tP+del;
+  var del=isDelivery ? (free ? 0 : DELIVERY) : 0;
+  var grand=tP+del;
+
   var rrpRow=document.getElementById('tRrp').parentElement;
   var savedRow=document.getElementById('tSaved').parentElement;
   rrpRow.style.display=allVerified?'flex':'none';
@@ -997,14 +1050,34 @@ function renderDrawer() {
     document.getElementById('tRrp').textContent='S$'+formatPrice(tR);
     document.getElementById('tSaved').textContent='\uD83C\uDF89 You saved S$'+formatPrice(tS)+' against verified '+(includesForeignReference?'reference prices':'RRP');
   }
+
+  var tDeliv = document.getElementById('tDeliv');
+  if (tDeliv) {
+    tDeliv.textContent = isDelivery ? (free ? 'Free (5+ books)' : 'S$'+formatPrice(DELIVERY)) : 'Free (Self-collect)';
+  }
+
   document.getElementById('tPrice').textContent='S$'+formatPrice(grand);
+
   var di=document.getElementById('delivInfo');
-  if(free){di.textContent='\uD83D\uDE9A Free delivery included!';di.className='deliv-info free';}
-  else{di.textContent='+ S$'+DELIVERY+' delivery \u00B7 or free self-collect (Tampines / Paya Lebar)';di.className='deliv-info';}
+  if (!isDelivery) {
+    di.textContent='📍 Free self-collect at Tampines or Paya Lebar (arranged via WhatsApp)';
+    di.className='deliv-info';
+  } else if (free) {
+    di.textContent='\uD83D\uDE9A Free delivery included (5+ books unlocked)!';
+    di.className='deliv-info free';
+  } else {
+    di.textContent='+ S$'+DELIVERY+' delivery \u00B7 Add '+need+' more book'+(need!==1?'s':'')+' for free delivery';
+    di.className='deliv-info';
+  }
+
   var lines=['Hi Marcus! I would like to order these pre-loved books from M Books:',''];
   cart.forEach(function(c,i){lines.push((i+1)+'. '+c.name+' by '+c.author+' - S$'+formatPrice(c.price));});
   lines.push('','Subtotal: S$'+formatPrice(tP)+' ('+cart.length+' book'+(cart.length!==1?'s':'')+')');
-  lines.push(free?'Delivery: Free!':'Delivery: S$'+DELIVERY);
+  if (isDelivery) {
+    lines.push(free ? 'Delivery: Free (5+ books unlocked!)' : 'Delivery: S$'+DELIVERY+' (Singapore standard)');
+  } else {
+    lines.push('Fulfillment: Free self-collect (Tampines / Paya Lebar)');
+  }
   lines.push('Grand Total: S$'+formatPrice(grand),'','Please confirm availability. Thank you!');
   document.getElementById('waBtn').href='https://wa.me/'+WA+'?text='+encodeURIComponent(lines.join('\n'));
 }
